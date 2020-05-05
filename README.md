@@ -6,9 +6,9 @@ We propose a framework, called PRobPlan (PRobabilistic Robot Planning). Our fram
 
 ## ROS simulated warehouse domain 
 
-### Simulation pipleline
+[overall-architecture](./warehouse-robot-domain/pics/Overall_architecture.png)
 
-
+[planning-node](./warehouse-robot-domain/pics/Planning_node.png)
 
 ### Requirements
 
