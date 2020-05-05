@@ -1,38 +1,7 @@
-
-
 export ROS_PACKAGE_PATH=/home/gdhu/tiago_public_ws/src:$ROS_PACKAGE_PATH
-export GAZEBO_MODEL_PATH=~/.gazebo/models
-
-
-
-roslaunch mult_protap_sim multitiago_gazebo_navigation.launch
-
 export GAZEBO_MODEL_PATH=~/.gazebo/models
 
 cd ~/tiago_public_ws
 source ./devel/setup.bash
 export ROS_PACKAGE_PATH=/home/gdhu/tiago_public_ws/src:/home/gdhu/simulation_ws/src:/home/gdhu/catkin_ws/src:/opt/ros/kinetic/share
 
-RDDL planner file dir:
-
-files/mult_ros/demo_ware_ros
-
-postions:
-
-task1: -0.774, -6.48
-task2: 2.34, -6.51
-task3: -2.02, -0.965
-task4: -1.97, 1.08
-task5: -2.97, -1.05
-task6: -2.99, 1.03
-task7: -3.93, -0.492
-
-
-TASK(t00_pick_obj1, a00_pick, l_loc1);
-TASK(t01_pick_obj2, a00_pick, l_loc2);
-TASK(t02_place_obj1, a01_place, l_loc3);
-TASK(t03_place_obj2, a01_place, l_loc4);
-TASK(t04_put_obj1_into_box, a02_pack, l_loc5);
-TASK(t05_put_obj2_into_box, a02_pack, l_loc6);
-TASK(t06_pack_all, a02_pack, l_loc7);
-TASK_UTILITY(t06_pack_all) = 200;

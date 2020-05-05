@@ -13,11 +13,19 @@ We propose a framework, called PRobPlan (PRobabilistic Robot Planning). Our fram
 
 ### Command
 
+- launch simulation
+
 `roslaunch probplan_sim probplan_gazebo_sim.launch`
 
 launches `gazebo` and `rviz` in ROS simulation.
 
+- launch PRobPlan
+
+`rosrun probplan_sim plan_to_ros_main.py`
+
 ### Results
+
+
 
 
 

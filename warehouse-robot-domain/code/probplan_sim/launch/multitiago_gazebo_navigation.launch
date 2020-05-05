@@ -58,6 +58,6 @@
     </include>
     -->
 
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mult_protap_sim)/config/rviz/multi_tiago.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find probplan_sim)/config/rviz/multi_tiago.rviz"/>
 
 </launch>
