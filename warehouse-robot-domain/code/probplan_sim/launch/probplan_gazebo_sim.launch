@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
     <!--small_office-modify original->pal_office -->
-    <arg name="world"  default="protap_warehouse"/>  <!-- pal office, ... (see ../worlds) -->
+    <arg name="world"  default="probplan_warehouse"/>  <!-- pal office, ... (see ../worlds) -->
     <arg name="gui" default="true"/>
     <arg name="debug" default="false"/>
     <arg name="public_sim" default="true"/>
