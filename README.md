@@ -6,6 +6,10 @@ We propose a framework, called PRobPlan (PRobabilistic Robot Planning). Our fram
 
 ## ROS simulated warehouse domain 
 
+### Simulation pipleline
+
+
+
 ### Requirements
 
 - Run Planner: Java SE 8 or higher
@@ -24,6 +28,7 @@ launches `gazebo` and `rviz` in ROS simulation.
 `rosrun probplan_sim plan_to_ros_main.py`
 
 ### Results
+
 
 
 
