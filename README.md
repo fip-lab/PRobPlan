@@ -6,9 +6,9 @@ We propose a framework, called PRobPlan (PRobabilistic Robot Planning). Our fram
 
 ## ROS simulated warehouse domain 
 
-[overall-architecture](./warehouse-robot-domain/pics/Overall_architecture.png)
+![overall-architecture](./warehouse-robot-domain/pics/Overall_architecture.png)
 
-[planning-node](./warehouse-robot-domain/pics/Planning_node.png)
+![planning-node](./warehouse-robot-domain/pics/Planning_node.png)
 
 ### Requirements
 
@@ -17,11 +17,11 @@ We propose a framework, called PRobPlan (PRobabilistic Robot Planning). Our fram
 
 ### Command
 
-- launch simulation
+- launch simulation: `gazebo` and `rviz`
 
 `roslaunch probplan_sim probplan_gazebo_sim.launch`
 
-launches `gazebo` and `rviz` in ROS simulation.
+
 
 - launch PRobPlan
 
