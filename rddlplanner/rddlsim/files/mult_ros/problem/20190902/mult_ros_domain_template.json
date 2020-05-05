@@ -1,0 +1,212 @@
+{
+  "domainName": "multi_ros_robot_mdp",
+  "description": "Multi ROS Robot Domain. Author: Dongning Rao (raodn [at] gdut.edu.cn) \n In a map, robots must get to task positions to perform actions and avoid obstacles, to complete user defined tasks. In this domain, heterogeneous robots may have different abilities. Robots have two kind of actions: go action, do action. In ProTaP, planning node will call ros navigation stack based on `go` action, and `do` action will be sent to ros MoveIt! framework for motion plannings.",
+  "requirements": [
+    "reward-deterministic",
+    "preconditions"
+  ],
+  "types": [
+    {
+      "description": "necessary for multi-robot planning",
+      "name": "robot",
+      "type": "object"
+    },
+    {
+      "description": "different robots can have different abilities",
+      "name": "ability",
+      "type": "object"
+    },
+    {
+      "description": "robots & goals locations",
+      "name": "location",
+      "type": "object"
+    },
+    {
+      "description": "task can be defined flexible",
+      "name": "task",
+      "type": "object"
+    }
+  ],
+  "pvariables": [
+    {
+      "description": "define a task",
+      "name": "TASK(task, ability, location)",
+      "fluentType": "non-fluent",
+      "type": "bool",
+      "default": "false"
+    },
+    {
+      "description": "navigation cost",
+      "name": "GO_COST(location, location)",
+      "fluentType": "non-fluent",
+      "type": "real",
+      "default": "10.0"
+    },
+    {
+      "description": "executing an action consumes cost",
+      "name": "DO_COST(robot, ability)",
+      "fluentType": "non-fluent",
+      "type": "real",
+      "default": "1.0"
+    },
+    {
+      "description": "task utility",
+      "name": "TASK_UTILITY(task) ",
+      "fluentType": "non-fluent",
+      "type": "real",
+      "default": "100.0"
+    },
+    {
+      "description": "Total number of all tasks needed to be completed by robots.",
+      "name": "NUM_OF_TASKS",
+      "fluentType": "non-fluent",
+      "type": "real",
+      "default": "5"
+    },
+    {
+      "description": "User can define task priority, high priority tasks should be completed first.",
+      "name": "TASK_PRIORITY(task)",
+      "fluentType": "non-fluent",
+      "type": "real",
+      "default": "1"
+    },
+    {
+      "description": "In probabilistic robots environment, navigation action has a successful probability.",
+      "name": "MOVE_PROB(robot)",
+      "fluentType": "non-fluent",
+      "type": "real",
+      "default": "0.8"
+    },
+    {
+      "description": "In probabilistic robots environment, arm manipulation action has a successful probability.",
+      "name": "DO_PROB(robot)",
+      "fluentType": "non-fluent",
+      "type": "real",
+      "default": "0.8"
+    },
+    {
+      "description": "In a single step, robots moves successfully or not.",
+      "name": "go-success(robot)",
+      "fluentType": "interm-fluent",
+      "type": "bool",
+      "level": "1"
+    },
+    {
+      "description": "In a single step, robots executes *do action* successfully or not.",
+      "name": "do-success(robot)",
+      "fluentType": "interm-fluent",
+      "type": "bool",
+      "level": "1"
+    },
+    {
+      "description": "Robot location.",
+      "name": "robot-at(robot, location)",
+      "fluentType": "state-fluent",
+      "type": "bool",
+      "default": "false"
+    },
+    {
+      "description": "A task is completed or not.",
+      "name": "completed(task)",
+      "fluentType": "state-fluent",
+      "type": "bool",
+      "default": "false"
+    },
+    {
+      "description": "This fluent is used in reward calculation, because each time step the TASK_UTILITY of each completed task will be calculated only once.",
+      "name": "check-completed(task)",
+      "fluentType": "state-fluent",
+      "type": "bool",
+      "default": "true"
+    },
+    {
+      "description": "User can define task order, for example `pre-task-completed(t1, t2)` t1 should be completed first, robots can do task t2.",
+      "name": "pre-task-completed(task, task)",
+      "fluentType": "state-fluent",
+      "type": "bool",
+      "default": "true"
+    },
+    {
+      "description": "Robot can use its ability to execute do action.",
+      "name": "do(robot, ability)",
+      "fluentType": "action-fluent",
+      "type": "bool",
+      "default": "false"
+    },
+    {
+      "description": "Robot navigation action",
+      "name": "go(robot, location)",
+      "fluentType": "action-fluent",
+      "type": "bool",
+      "default": "false"
+    }
+  ],
+  "cpfs": [
+    {
+      "description": "Go action executes successfully or not.",
+      "name": "go-success(?r)",
+      "expr": "Bernoulli( MOVE_PROB(?r) );"
+    },
+    {
+      "description": "Do action executes successfully or not.",
+      "name": "do-success(?r)",
+      "expr": "Bernoulli( DO_PROB(?r) );"
+    },
+    {
+      "description": "Robot location",
+      "name": "robot-at'(?r, ?l)",
+      "expr": "if (go(?r,?l) & go-success(?r) ) then true  else if (exists_{?l_nav : location} [go(?r, ?l_nav) & go-success(?r)] ) then false else  robot-at(?r,?l);"
+    },
+    {
+      "description": "If a tak has been completed.",
+      "name": "completed'(?g)",
+      "expr": "if (exists_{?r : robot, ?a : ability, ?l : location} [ do(?r, ?a) & do-success(?r) & TASK(?g, ?a, ?l) & robot-at(?r, ?l) & (forall_{?t: task} pre-task-completed(?t,?g)) ]) then true else completed(?g);"
+    },
+    {
+      "description": "Reward counts for only once.",
+      "name": "check-completed'(?t)",
+      "expr": "if ( completed(?t) ) then false else check-completed(?t);"
+    },
+    {
+      "description": "User can define task order, pre task of `t2` has been completed?",
+      "name": "pre-task-completed'(?t1, ?t2)",
+      "expr": "if ( pre-task-completed(?t1, ?t2) ) then true else if(exists_{?r : robot, ?a : ability, ?l : location} [ do(?r, ?a) & do-success(?r) & TASK(?t1, ?a, ?l) & robot-at(?r, ?l)     ]) then true else false;"
+    }
+  ],
+  "reward": {
+    "description": "Reward is a sum of penalties for those actions, and task completed. Reward has three parts: task utilities, do action cost, go action cost",
+    "expr": "[sum_{?t : task} [ [completed(?t) & check-completed(?t) ] * TASK_UTILITY(?t) * TASK_PRIORITY(?t)] ] - [sum_{?r : robot, ?a : ability} [ do(?r, ?a)] * DO_COST(?r, ?a)] - [sum_{?r : robot, ?l : location, ?l_nav : location}  [ [ go-success(?r) & robot-at(?r, ?l) & go(?r, ?l_nav) ] * GO_COST(?l, ?l_nav) ]];"
+  },
+  "action-preconditions": [
+    {
+      "description": "In a single time step, each robot can execute only one action.",
+      "expr": "forall_{?r : robot} [ [sum_{?a : ability} [ do(?r,?a)] ] + [sum_{?l : location} [ go(?r, ?l)] ] <= 1];"
+    },
+    {
+      "description": "Robot must go to different locations.",
+      "expr": "forall_{?l : location} [ [sum_{?r : robot} [ go(?r,?l) ] ] <= 1  ];"
+    }
+  ],
+  "state-invariants": [
+    {
+      "description": "robot at exactly one location",
+      "expr": "forall_{?r : robot} [ [sum_{?l : location} [ robot-at(?r, ?l)] ] == 1 ];"
+    }
+  ],
+  "terminate-when": [
+    {
+      "description": "planner terminates, when all task are completed.",
+      "expr": "[sum_{?t : task} [ completed(?t) ] ] == NUM_OF_TASKS;"
+    }
+  ],
+  "action-preference": [
+    {
+      "description": "execute go, then execute do, `*` means the place holder parameter can be anything.",
+      "expr": "go(robot,*) and do(robot,*)"
+    },
+    {
+      "description": "execute do, then execute go, `*` means the place holder parameter can be anything.",
+      "expr": "do(robot,*) and go(robot,*)"
+    }
+  ]
+}

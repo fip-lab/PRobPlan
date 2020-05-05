@@ -1,0 +1,36 @@
+instance multi_ros_robot_inst_mdp__10 {
+
+  domain = multi_ros_robot_mdp;
+
+  objects {
+    robot  : {r1,r2};
+    ability : {a1,a2,a3};
+    location : {l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12};
+    task   : {t1,t2,t3,t4,t5,t6,t7,t8,t9,t10};
+  };
+
+  non-fluents {
+    TASK(t1,a1,l3);
+    TASK(t2,a1,l4);
+    TASK(t3,a2,l5);
+    TASK(t4,a3,l6);
+    TASK(t5,a3,l7);
+    TASK(t6,a3,l8);
+    TASK(t7,a3,l9);
+    TASK(t8,a3,l10);
+    TASK(t9,a3,l11);
+    TASK(t10,a3,l12);
+  };
+
+  init-state {
+    robot-at(r1,l1);
+    robot-at(r2,l2);
+  };
+
+  //max-nondef-actions = 4;
+
+  horizon = 10;
+
+  discount = 1.0;
+
+}

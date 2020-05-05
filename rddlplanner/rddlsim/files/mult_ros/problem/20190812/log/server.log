@@ -1,0 +1,37 @@
+Loading: /home/gdhu/projects/test/files/mult_ros_robot_original.rddl
+Loading: /home/gdhu/projects/test/files/multi_ros_robot_inst_mdp__1.rddl
+
+using RDDL input files from args[0]: /home/gdhu/projects/test/files
+using default port at: 2323
+using default number of rounds: 1
+setting seed to random value: 0
+individual session is disabled due to default setting
+default timeout is used: 20000
+logs are written to default file at: rddl
+execution monitoring is disabled due to default setting
+using default type of time: 0
+cgroup and planner name are not used
+RDDL Server Initialized
+Connection from client at address localhost / 127.0.0.1
+Client name: SOGBOFA
+Instance requested: multi_ros_robot_inst_mdp__1
+Round 1 / 1, time remaining: 19377
+[ Memory usage: 109Mb / 262.14Mb = 0.42 ]
+** Actions received: []
+** Remaining time: 18932
+** Actions received: [goto(tiago1, l_t00);]
+** Remaining time: 15105
+** Actions received: [do(tiago1, a00_pick);]
+** Remaining time: 11253
+** Actions received: []
+** Remaining time: 7313
+** Actions received: []
+** Remaining time: 1301
+** Round reward: 39.76844138207417
+multi_ros_robot_inst_mdp__1
+Session finished successfully: SOGBOFA
+Time left: 1297
+Number of simulations: 0
+Number of runs: 1
+Accumulated reward: 39.76844138207417
+Average reward: 39.76844138207417

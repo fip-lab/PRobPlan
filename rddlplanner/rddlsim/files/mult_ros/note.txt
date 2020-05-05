@@ -1,0 +1,27 @@
+2018-12-27
+
+files/mult_ros/problem rddl.policy.RandomBoolPolicy multi_ros_robot_inst_mdp__1
+
+
+
+        robot-at'(?a, ?x, ?y) =
+            // robot moves to the left and ends up here
+            if ( left(?a) & ( exists_{ ?x2 : xpos } [ robot-at(?a, ?x2, ?y) & ADJACENT_LEFT(?x, ?x2) ] ) )
+                then true
+
+            // robot moves to the right and ends up here
+            else if( right(?a) & ( exists_{ ?x2 : xpos } [ robot-at(?a, ?x2, ?y) & ADJACENT_RIGHT(?x, ?x2) ] ) )
+                then true
+            else if( right(?a) & ( ~exists_{ ?x2 : xpos } [ robot-at(?a, ?x2, ?y) & ADJACENT_RIGHT(?x, ?x2) ] ) )
+                then false
+            // robot moves upwards and ends up here
+            else if( up(?a) & ( exists_{ ?y2 : ypos } [ robot-at(?a, ?x, ?y2) & ADJACENT_UP(?y, ?y2) ] ) )
+                then true
+            // robot moves downwards and ends up here
+            else if( down(?a) & ( exists_{ ?y2 : ypos } [ robot-at(?a, ?x, ?y2) & ADJACENT_DOWN(?y, ?y2) ] ) )
+                then true
+            // robot moves, but it doesn't end up here
+            else if ( left(?a) | right(?a) | up(?a) | down(?a) )
+                then false
+            // robot doesn't move, so it is here only if it was already here
+            else robot-at(?a, ?x, ?y);

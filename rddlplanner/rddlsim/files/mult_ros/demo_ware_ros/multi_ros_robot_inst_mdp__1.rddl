@@ -1,0 +1,56 @@
+instance multi_ros_robot_inst_warehouse_demo {
+
+	domain = multi_ros_robot_mdp;
+
+	objects {
+		robot : { r00,r01,r02 };
+		ability : { a00,a01 };
+		location : { l_r00,l_r01,l_r02,l_t00,l_t01,l_t02 };
+		task : { t00,t01,t02 };
+  };
+
+	non-fluents {
+		MOVE_PROB(r00) = 0.9;
+		MOVE_PROB(r01) = 0.9;
+		MOVE_PROB(r02) = 0.9;
+		DO_PROB(r00) = 0.9;
+		DO_PROB(r01) = 0.9;
+		DO_PROB(r02) = 0.9;
+		GOTO_COST(r01, l_t00) = 5.898810178808718;
+		GOTO_COST(r01, l_t01) = 7.277194646256304;
+		GOTO_COST(r01, l_t02) = 9.395541345261272;
+		GOTO_COST(r02, l_t00) = 4.333770231249144;
+		GOTO_COST(r02, l_t01) = 3.5186446840035432;
+		GOTO_COST(r02, l_t02) = 2.95897893815118;
+		GOTO_COST(r00, l_t00) = 3.370411483144649;
+		GOTO_COST(r00, l_t01) = 3.96718841520133;
+		GOTO_COST(r00, l_t02) = 6.313391585288333;
+		DO_COST(r00, a00) = 10;
+		DO_COST(r00, a01) = 10;
+		DO_COST(r01, a00) = 10;
+		DO_COST(r01, a01) = 10;
+		DO_COST(r02, a00) = 10;
+		DO_COST(r02, a01) = 10;
+		TASK(t00, a00, l_t00);
+		TASK(t01, a00, l_t01);
+		TASK(t02, a01, l_t02);
+		TASK_UTILITY(t00) = 100;
+		TASK_UTILITY(t01) = 100;
+		TASK_UTILITY(t02) = 100;
+		TASK_PRIORITY(t00) = 1;
+		TASK_PRIORITY(t01) = 1;
+		TASK_PRIORITY(t02) = 1;
+	};
+
+	init-state {
+		robot-at(r00, l_r00);
+		robot-at(r01, l_r01);
+		robot-at(r02, l_r02);
+		pre-task-finished(t00, t01) = false;
+	};
+
+	horizon = 10;
+
+	discount = 0.8;
+
+}

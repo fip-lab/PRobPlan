@@ -1,0 +1,112 @@
+instance multi_ros_robot_inst_mdp__3 {
+
+  domain = multi_ros_robot_mdp;
+
+  objects {
+    robot : {r1,r2,r3,r4,r5};
+    action : {a1,a2,a3};
+    xPos : {x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,x17,x18,x19,x20};
+    yPos : {y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15,y16,y17,y18,y19,y20};
+    goal : {g1,g2,g3,g4,g5,g6,g7,g8,g9,g10};
+  };
+
+  non-fluents {
+    PROB_GOTO(r1) = 0.9;
+    PROB_GOTO(r2) = 0.9;
+    PROB_GOTO(r3) = 0.9;
+    PROB_GOTO(r4) = 0.9;
+    PROB_GOTO(r5) = 0.9;
+    DO_COST(r1,a1) = 1;
+    DO_COST(r1,a2) = 1;
+    DO_COST(r1,a3) = 1;
+    DO_COST(r2,a1) = 1;
+    DO_COST(r2,a2) = 1;
+    DO_COST(r2,a3) = 1;
+    DO_COST(r3,a1) = 1;
+    DO_COST(r3,a2) = 1;
+    DO_COST(r3,a3) = 1;
+    DO_COST(r4,a1) = 1;
+    DO_COST(r4,a2) = 1;
+    DO_COST(r4,a3) = 1;
+    DO_COST(r5,a1) = 1;
+    DO_COST(r5,a2) = 1;
+    DO_COST(r5,a3) = 1;
+    // XPOS 
+    X_POS(x1)=1;
+    X_POS(x2)=2;
+    X_POS(x3)=3;
+    X_POS(x4)=4;
+    X_POS(x5)=5;
+    X_POS(x6)=6;
+    X_POS(x7)=7;
+    X_POS(x8)=8;
+    X_POS(x9)=9;
+    X_POS(x10)=10;
+    X_POS(x11)=11;
+    X_POS(x12)=12;
+    X_POS(x13)=13;
+    X_POS(x14)=14;
+    X_POS(x15)=15;
+    X_POS(x16)=16;
+    X_POS(x17)=17;
+    X_POS(x18)=18;
+    X_POS(x19)=19;
+    X_POS(x20)=20;
+    // YPOS 
+    Y_POS(y1)=1;
+    Y_POS(y2)=2;
+    Y_POS(y3)=3;
+    Y_POS(y4)=4;
+    Y_POS(y5)=5;
+    Y_POS(y6)=6;
+    Y_POS(y7)=7;
+    Y_POS(y8)=8;
+    Y_POS(y9)=9;
+    Y_POS(y10)=10;
+    Y_POS(y11)=11;
+    Y_POS(y12)=12;
+    Y_POS(y13)=13;
+    Y_POS(y14)=14;
+    Y_POS(y15)=15;
+    Y_POS(y16)=16;
+    Y_POS(y17)=17;
+    Y_POS(y18)=18;
+    Y_POS(y19)=19;
+    Y_POS(y20)=20;
+    GOAL_UTILITY(g1) = 100;
+    GOAL_UTILITY(g2) = 100;
+    GOAL_UTILITY(g3) = 100;
+    GOAL_UTILITY(g4) = 100;
+    GOAL_UTILITY(g5) = 100;
+    GOAL_UTILITY(g6) = 100;
+    GOAL_UTILITY(g7) = 100;
+    GOAL_UTILITY(g8) = 100;
+    GOAL_UTILITY(g9) = 100;
+    GOAL_UTILITY(g10) = 100;
+    GOAL(g1,a1,x5,y14);
+    GOAL(g2,a2,x9,y12);
+    GOAL(g3,a2,x8,y15);
+    GOAL(g4,a2,x16,y3);
+    GOAL(g5,a2,x20,y5);
+    GOAL(g6,a3,x15,y2);
+    GOAL(g7,a2,x8,y4);
+    GOAL(g8,a1,x3,y17);
+    GOAL(g9,a1,x15,y20);
+    GOAL(g10,a3,x14,y4);
+  };
+
+  init-state {
+    robotAt(r1,x2,y17);
+    robotAt(r2,x15,y15);
+    robotAt(r3,x1,y11);
+    robotAt(r4,x13,y20);
+    robotAt(r5,x19,y8);
+  };
+
+  //max-nondef-actions = 10;
+
+  horizon = 10;
+
+  discount = 1.0;
+
+}

@@ -1,0 +1,59 @@
+/////////////////////////////////////////////////////////////////////////////////
+//                                                                             //
+//                                                                             //
+// RDDL MDP version of Cooperative Recon instance #01 for IPC 2018 by Thomas   //
+// Keller (tho.keller [at] unibas.ch), based on the IPC 2011 domain by Tom     //
+// Walsh (thomasjwalsh [at] gmail.com).                                        //
+//                                                                             //
+//                                                                             //
+/////////////////////////////////////////////////////////////////////////////////
+
+instance mult-ros_inst_mdp__01 {
+    domain = mult-ros_mdp;
+
+    objects { 
+        xpos               : { x00, x01, x02 };
+        ypos               : { y00, y01, y02 };
+        task               : { obj00, obj01 };
+        robot              : { a00, a01 };
+        ability            : { abl01, abl02 };
+    };
+
+    non-fluents {
+        // ADJACENCY
+        ADJACENT_LEFT(x00, x01);
+        ADJACENT_RIGHT(x01, x00);
+        ADJACENT_LEFT(x01, x02);
+        ADJACENT_RIGHT(x02, x01);
+        ADJACENT_DOWN(y00, y01);
+        ADJACENT_UP(y01, y00);
+        ADJACENT_DOWN(y01, y02);
+        ADJACENT_UP(y02, y01);
+
+        // HAS ABILITY
+        HAS_ABILITY(a00,abl01);
+        HAS_ABILITY(a01,abl02);
+
+        // TASK_REQ
+        TASK_REQ(obj00,abl01);
+        TASK_REQ(obj01,abl02);
+
+        // TASK_AT
+        TASK_AT(obj00, x02, y01);
+        TASK_AT(obj01, x02, y01);
+
+        // REWARDS
+        TASK_REWARD(obj00) = 600;
+        TASK_REWARD(obj01) = -2000;
+
+    };
+
+    init-state { 
+        robot-at(a00, x00, y00);
+        robot-at(a01, x01, y02);
+    };
+
+    horizon = 10;
+
+    discount = 1.0;
+}

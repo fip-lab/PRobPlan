@@ -1,0 +1,139 @@
+////////////////////////////////////////////////////////////////////
+//
+// Multi ROS Robot Domain
+//
+// Author: Dongning Rao (raodn [at] gdut.edu.cn)
+//
+// In a grid, robots must get to goal positions to perform actions and avoid obstacles, along with tasks like communication.
+// Different robots have random abilities.
+// goto action:  can call navigation
+// moveit action: can call Moveit! for motion plannings
+// other action: e.g., communication
+////////////////////////////////////////////////////////////////////
+
+domain multi_ros_robot_mdp {
+  requirements {
+    reward-deterministic,
+    preconditions
+  };
+
+
+  types {
+    robot              : object;
+    ability            : object;
+    xpos               : object;
+    ypos               : object;
+    goal               : object;
+  };
+    
+  	
+  pvariables {
+
+    //////////////////// non-fluents ////////////////////
+    // connectivity of the grid
+    ADJACENT_UP(ypos,ypos)                       : { non-fluent, bool, default = false };
+    ADJACENT_DOWN(ypos,ypos)                     : { non-fluent, bool, default = false };
+    ADJACENT_RIGHT(xpos, xpos)                   : { non-fluent, bool, default = false };
+    ADJACENT_LEFT(xpos,xpos)                     : { non-fluent, bool, default = false };
+    // goal, is the trajectory problem.
+    GOAL(goal, ability, xpos, ypos)              : { non-fluent, bool, default = false };
+
+    DO_COST(robot,ability)                       : { non-fluent, real, default = 1 };
+    GOAL_UTILITY(goal)                           : {non-fluent, real, default = 100};
+
+    // move success probability
+    MOVE_PROB(robot) : {non-fluent, real, default = 0.8};
+
+    // do success probability
+    DO_PROB(robot) : {non-fluent, real, default = 0.7};
+    //////////////////// interm-fluents ////////////////////
+
+    move-success(robot) : { interm-fluent , bool , level = 1 };
+
+    do-success(robot) : { interm-fluent , bool , level = 1 };
+
+    //////////////////// state-fluents ////////////////////
+    robot-at(robot, xpos, ypos) : { state-fluent, bool, default = false };
+    done(goal) : { state-fluent, bool, default = false };
+    // we calculate goal utility only once, intern fluent may be better ?
+    check-goal(goal) : {state-fluent, bool, default = true};
+
+    //////////////////// action-fluents ////////////////////
+    // move an robot upwards
+    up(robot)                                    : { action-fluent, bool, default = false };
+    // move an robot downwards
+    down(robot)                                  : { action-fluent, bool, default = false };
+    // move an robot to the left
+    left(robot)                                  : { action-fluent, bool, default = false };
+    // move an robot to the right
+    right(robot)                                 : { action-fluent, bool, default = false };
+    //
+    do(robot, ability)                           : { action-fluent, bool, default = false };
+  };
+
+
+  cpfs {
+
+    // d
+    move-success(?r) = Bernoulli( MOVE_PROB(?r) );
+    do-success(?r) = Bernoulli( DO_PROB(?r) );
+
+    robot-at'(?r, ?x, ?y) =
+        // agent moves to the left and ends up here
+        if ( move-success(?r) & left(?r) & ( exists_{ ?x2 : xpos } [ robot-at(?r, ?x2, ?y) & ADJACENT_LEFT(?x, ?x2) ] ) )
+            then true
+        // agent moves to the right and ends up here
+        else if( move-success(?r) & right(?r) & ( exists_{ ?x2 : xpos } [ robot-at(?r, ?x2, ?y) & ADJACENT_RIGHT(?x, ?x2) ] ) )
+            then true
+        // agent moves upwards and ends up here
+        else if( move-success(?r) & up(?r) & ( exists_{ ?y2 : ypos } [ robot-at(?r, ?x, ?y2) & ADJACENT_UP(?y, ?y2) ] ) )
+            then true
+        // agent moves downwards and ends up here
+        else if( move-success(?r) & down(?r) & ( exists_{ ?y2 : ypos } [ robot-at(?r, ?x, ?y2) & ADJACENT_DOWN(?y, ?y2) ] ) )
+            then true
+        // agent moves, but it doesn't end up here
+        else if ( move-success(?r) & ( left(?r) | right(?r) | up(?r) | down(?r) ) )
+            then false
+        // agent doesn't move, so it is here only if it was already here
+        else robot-at(?r, ?x, ?y);
+
+    done'(?g) =
+       if (exists_{?r: robot, ?a: ability, ?x : xpos, ?y : ypos}
+        // robot already at GOAL position or robot takes concurrent action: goto GOAL position and execute do
+        [ do(?r, ?a) & GOAL(?g,?a,?x,?y) & robot-at(?r, ?x, ?y) & do-success(?r) ])
+        then true
+      else
+        done(?g);
+
+    check_goal'(?g) = if ( done(?g) )
+                      then false
+                    else
+                      check_goal(?g);
+
+  };
+
+
+      // Reward is a sum of penalties for those actions, and goals achieved
+    	// For simplicity, we use the square of the distance as factor, rddl does not support absolute or sqrt functions.
+    	reward = [sum_{?g : goal} [ [done(?g) ^ check_goal(?g) ] * GOAL_UTILITY(?g)] ]
+    	       - [sum_{?r : robot, ?a : ability} [do(?r, ?a)]*DO_COST(?r, ?a)]
+    		     - [sum_{?r : robot} [ left(?r) + right(?r) + up(?r) + down(?r) ]];
+
+
+    action-preconditions {
+
+        // dont move outside of the grid
+        forall_{ ?r : robot } [ left(?r) => exists_{ ?x1 : xpos, ?x2 : xpos, ?y : ypos } [ robot-at(?r, ?x1, ?y) & ADJACENT_LEFT(?x2, ?x1) ] ];
+        forall_{ ?r : robot } [ right(?r) => exists_{ ?x1 : xpos, ?x2 : xpos, ?y : ypos } [ robot-at(?r, ?x1, ?y) & ADJACENT_RIGHT(?x2, ?x1) ] ];
+        forall_{ ?r : robot } [ up(?r) => exists_{ ?x : xpos, ?y1 : ypos, ?y2 : ypos } [ robot-at(?r, ?x, ?y1) & ADJACENT_UP(?y2, ?y1) ] ];
+        forall_{ ?r : robot } [ down(?r) => exists_{ ?x : xpos, ?y1 : ypos, ?y2 : ypos } [ robot-at(?r, ?x, ?y1) & ADJACENT_DOWN(?y2, ?y1) ] ];
+
+
+      // one do action for one robot at a time
+      forall_{?r : robot} [(sum_{?a : ability} [ do(?r,?a)] )<= 1];
+      // one goto for one robot at a time
+      forall_{?r : robot} [ [ left(?r) + right(?r) + up(?r) + down(?r)]  <= 1 ];
+    };
+}
+
+

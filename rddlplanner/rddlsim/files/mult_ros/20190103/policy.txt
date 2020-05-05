@@ -1,0 +1,39 @@
+
+MultiRosRobot
+
+getActions(State s)
+{
+  while ( H>0 && hasUnfinishedGoals)
+  {
+    根据 1.Goal Utility 2.Robot 与 Goal的距离等因素 综合打分计算Robot与Goal的匹配程度。
+    每个robot都与一个goal对应
+    PriorityQueue<Task> tasks = GenerateUnfinishedTasks();
+
+    int tasksNum = min ( numOfAvailableRobots, numOfUnfinishedTasks );
+
+    List actions = new ArrayList();
+
+    for(int i=0; i<tasksNum; i++)
+    {
+      actions.add(tasks.pop().action());
+    }
+    return actions; // 返回动作
+
+  }
+
+  return Noop or terminate
+}
+
+class Task
+{
+  Robot r;
+  Goal g;
+  Score score;
+
+  action(); // 返回动作 goto(robot, xPos, yPos) and do(robot, action)
+}
+
+class Score
+{
+  double score; // 根据 1.Goal Utility 2.Robot 与 Goal的距离等因素 综合打分计算Robot与Goal的匹配程度。
+}

@@ -1,0 +1,336 @@
+instance multi_ros_robot_inst_warehouse_demo {
+
+	domain = multi_ros_robot_mdp;
+
+	objects {
+		robot : { 
+			r00, // mobile-piece-picking
+			r01, // mobile-piece-picking
+			r02, // goods-to-packer
+			r03, // goods-to-packer
+			r04  // co-packer
+		};
+		ability : { 
+			a00, // lift_heavy_goods
+			a01, // pick_box
+		  a02  //packing
+		};
+		task : { 
+			t00, // navigate_to_shelf_A01,
+			t01, // move_shelf_A01_to_PICK_area
+			t02, // bring_box_A_from_shelf_A01_to_PACK_area
+			t03, // navigate_to_shelf_B01,
+			t04, // move_shelf_B01_to_PICK_area
+			t05, // bring_box_B_from_shelf_B01_to_PACK_area
+			t06, // navigate_to_shelf_C01,
+			t07, // move_shelf_C01_to_PICK_area
+			t08, // bring_box_C_from_shelf_B01_to_PACK_area
+			t09 // pack_box_A_B_C_to_a_package
+		};
+		location : { 
+			l_r00, // initial location of robot r00
+			l_r01, // initial location of robot r01
+			l_r02, // initial location of robot r02
+			l_r03, // initial location of robot r03
+			l_r04, // initial location of robot r04
+			l_t00, // initial location of task
+			l_t01,
+			l_t02,
+			l_t03,
+			l_t04,
+			l_t05,
+			l_t06,
+			l_t07,
+			l_t08,
+			l_t09
+		};
+  };
+
+	non-fluents {
+		MOVE_PROB(r00) = 0.9;
+		MOVE_PROB(r01) = 0.9;
+		MOVE_PROB(r02) = 0.9;
+		MOVE_PROB(r03) = 0.9;
+		MOVE_PROB(r04) = 0.9;
+		DO_PROB(r00) = 0.9;
+		DO_PROB(r01) = 0.9;
+		DO_PROB(r02) = 0.9;
+		DO_PROB(r03) = 0.9;
+		DO_PROB(r04) = 0.9;
+		GOTO_COST(l_r00, l_r01) = 12;
+		GOTO_COST(l_r01, l_r00) = 12;
+		GOTO_COST(l_r00, l_r02) = 13;
+		GOTO_COST(l_r02, l_r00) = 13;
+		GOTO_COST(l_r00, l_r03) = 19;
+		GOTO_COST(l_r03, l_r00) = 19;
+		GOTO_COST(l_r00, l_r04) = 19;
+		GOTO_COST(l_r04, l_r00) = 19;
+		GOTO_COST(l_r00, l_t00) = 17;
+		GOTO_COST(l_t00, l_r00) = 17;
+		GOTO_COST(l_r00, l_t01) = 12;
+		GOTO_COST(l_t01, l_r00) = 12;
+		GOTO_COST(l_r00, l_t02) = 15;
+		GOTO_COST(l_t02, l_r00) = 15;
+		GOTO_COST(l_r00, l_t03) = 18;
+		GOTO_COST(l_t03, l_r00) = 18;
+		GOTO_COST(l_r00, l_t04) = 19;
+		GOTO_COST(l_t04, l_r00) = 19;
+		GOTO_COST(l_r00, l_t05) = 17;
+		GOTO_COST(l_t05, l_r00) = 17;
+		GOTO_COST(l_r00, l_t06) = 18;
+		GOTO_COST(l_t06, l_r00) = 18;
+		GOTO_COST(l_r00, l_t07) = 14;
+		GOTO_COST(l_t07, l_r00) = 14;
+		GOTO_COST(l_r00, l_t08) = 17;
+		GOTO_COST(l_t08, l_r00) = 17;
+		GOTO_COST(l_r00, l_t09) = 17;
+		GOTO_COST(l_t09, l_r00) = 17;
+		GOTO_COST(l_r01, l_r02) = 10;
+		GOTO_COST(l_r02, l_r01) = 10;
+		GOTO_COST(l_r01, l_r03) = 14;
+		GOTO_COST(l_r03, l_r01) = 14;
+		GOTO_COST(l_r01, l_r04) = 16;
+		GOTO_COST(l_r04, l_r01) = 16;
+		GOTO_COST(l_r01, l_t00) = 18;
+		GOTO_COST(l_t00, l_r01) = 18;
+		GOTO_COST(l_r01, l_t01) = 19;
+		GOTO_COST(l_t01, l_r01) = 19;
+		GOTO_COST(l_r01, l_t02) = 12;
+		GOTO_COST(l_t02, l_r01) = 12;
+		GOTO_COST(l_r01, l_t03) = 16;
+		GOTO_COST(l_t03, l_r01) = 16;
+		GOTO_COST(l_r01, l_t04) = 15;
+		GOTO_COST(l_t04, l_r01) = 15;
+		GOTO_COST(l_r01, l_t05) = 17;
+		GOTO_COST(l_t05, l_r01) = 17;
+		GOTO_COST(l_r01, l_t06) = 12;
+		GOTO_COST(l_t06, l_r01) = 12;
+		GOTO_COST(l_r01, l_t07) = 18;
+		GOTO_COST(l_t07, l_r01) = 18;
+		GOTO_COST(l_r01, l_t08) = 13;
+		GOTO_COST(l_t08, l_r01) = 13;
+		GOTO_COST(l_r01, l_t09) = 12;
+		GOTO_COST(l_t09, l_r01) = 12;
+		GOTO_COST(l_r02, l_r03) = 12;
+		GOTO_COST(l_r03, l_r02) = 12;
+		GOTO_COST(l_r02, l_r04) = 14;
+		GOTO_COST(l_r04, l_r02) = 14;
+		GOTO_COST(l_r02, l_t00) = 11;
+		GOTO_COST(l_t00, l_r02) = 11;
+		GOTO_COST(l_r02, l_t01) = 10;
+		GOTO_COST(l_t01, l_r02) = 10;
+		GOTO_COST(l_r02, l_t02) = 18;
+		GOTO_COST(l_t02, l_r02) = 18;
+		GOTO_COST(l_r02, l_t03) = 17;
+		GOTO_COST(l_t03, l_r02) = 17;
+		GOTO_COST(l_r02, l_t04) = 13;
+		GOTO_COST(l_t04, l_r02) = 13;
+		GOTO_COST(l_r02, l_t05) = 19;
+		GOTO_COST(l_t05, l_r02) = 19;
+		GOTO_COST(l_r02, l_t06) = 16;
+		GOTO_COST(l_t06, l_r02) = 16;
+		GOTO_COST(l_r02, l_t07) = 11;
+		GOTO_COST(l_t07, l_r02) = 11;
+		GOTO_COST(l_r02, l_t08) = 18;
+		GOTO_COST(l_t08, l_r02) = 18;
+		GOTO_COST(l_r02, l_t09) = 17;
+		GOTO_COST(l_t09, l_r02) = 17;
+		GOTO_COST(l_r03, l_r04) = 16;
+		GOTO_COST(l_r04, l_r03) = 16;
+		GOTO_COST(l_r03, l_t00) = 18;
+		GOTO_COST(l_t00, l_r03) = 18;
+		GOTO_COST(l_r03, l_t01) = 12;
+		GOTO_COST(l_t01, l_r03) = 12;
+		GOTO_COST(l_r03, l_t02) = 19;
+		GOTO_COST(l_t02, l_r03) = 19;
+		GOTO_COST(l_r03, l_t03) = 10;
+		GOTO_COST(l_t03, l_r03) = 10;
+		GOTO_COST(l_r03, l_t04) = 17;
+		GOTO_COST(l_t04, l_r03) = 17;
+		GOTO_COST(l_r03, l_t05) = 16;
+		GOTO_COST(l_t05, l_r03) = 16;
+		GOTO_COST(l_r03, l_t06) = 13;
+		GOTO_COST(l_t06, l_r03) = 13;
+		GOTO_COST(l_r03, l_t07) = 11;
+		GOTO_COST(l_t07, l_r03) = 11;
+		GOTO_COST(l_r03, l_t08) = 11;
+		GOTO_COST(l_t08, l_r03) = 11;
+		GOTO_COST(l_r03, l_t09) = 17;
+		GOTO_COST(l_t09, l_r03) = 17;
+		GOTO_COST(l_r04, l_t00) = 19;
+		GOTO_COST(l_t00, l_r04) = 19;
+		GOTO_COST(l_r04, l_t01) = 19;
+		GOTO_COST(l_t01, l_r04) = 19;
+		GOTO_COST(l_r04, l_t02) = 11;
+		GOTO_COST(l_t02, l_r04) = 11;
+		GOTO_COST(l_r04, l_t03) = 15;
+		GOTO_COST(l_t03, l_r04) = 15;
+		GOTO_COST(l_r04, l_t04) = 10;
+		GOTO_COST(l_t04, l_r04) = 10;
+		GOTO_COST(l_r04, l_t05) = 15;
+		GOTO_COST(l_t05, l_r04) = 15;
+		GOTO_COST(l_r04, l_t06) = 11;
+		GOTO_COST(l_t06, l_r04) = 11;
+		GOTO_COST(l_r04, l_t07) = 11;
+		GOTO_COST(l_t07, l_r04) = 11;
+		GOTO_COST(l_r04, l_t08) = 17;
+		GOTO_COST(l_t08, l_r04) = 17;
+		GOTO_COST(l_r04, l_t09) = 16;
+		GOTO_COST(l_t09, l_r04) = 16;
+		GOTO_COST(l_t00, l_t01) = 11;
+		GOTO_COST(l_t01, l_t00) = 11;
+		GOTO_COST(l_t00, l_t02) = 11;
+		GOTO_COST(l_t02, l_t00) = 11;
+		GOTO_COST(l_t00, l_t03) = 11;
+		GOTO_COST(l_t03, l_t00) = 11;
+		GOTO_COST(l_t00, l_t04) = 16;
+		GOTO_COST(l_t04, l_t00) = 16;
+		GOTO_COST(l_t00, l_t05) = 10;
+		GOTO_COST(l_t05, l_t00) = 10;
+		GOTO_COST(l_t00, l_t06) = 13;
+		GOTO_COST(l_t06, l_t00) = 13;
+		GOTO_COST(l_t00, l_t07) = 12;
+		GOTO_COST(l_t07, l_t00) = 12;
+		GOTO_COST(l_t00, l_t08) = 17;
+		GOTO_COST(l_t08, l_t00) = 17;
+		GOTO_COST(l_t00, l_t09) = 14;
+		GOTO_COST(l_t09, l_t00) = 14;
+		GOTO_COST(l_t01, l_t02) = 16;
+		GOTO_COST(l_t02, l_t01) = 16;
+		GOTO_COST(l_t01, l_t03) = 11;
+		GOTO_COST(l_t03, l_t01) = 11;
+		GOTO_COST(l_t01, l_t04) = 18;
+		GOTO_COST(l_t04, l_t01) = 18;
+		GOTO_COST(l_t01, l_t05) = 14;
+		GOTO_COST(l_t05, l_t01) = 14;
+		GOTO_COST(l_t01, l_t06) = 13;
+		GOTO_COST(l_t06, l_t01) = 13;
+		GOTO_COST(l_t01, l_t07) = 13;
+		GOTO_COST(l_t07, l_t01) = 13;
+		GOTO_COST(l_t01, l_t08) = 11;
+		GOTO_COST(l_t08, l_t01) = 11;
+		GOTO_COST(l_t01, l_t09) = 14;
+		GOTO_COST(l_t09, l_t01) = 14;
+		GOTO_COST(l_t02, l_t03) = 13;
+		GOTO_COST(l_t03, l_t02) = 13;
+		GOTO_COST(l_t02, l_t04) = 17;
+		GOTO_COST(l_t04, l_t02) = 17;
+		GOTO_COST(l_t02, l_t05) = 14;
+		GOTO_COST(l_t05, l_t02) = 14;
+		GOTO_COST(l_t02, l_t06) = 16;
+		GOTO_COST(l_t06, l_t02) = 16;
+		GOTO_COST(l_t02, l_t07) = 14;
+		GOTO_COST(l_t07, l_t02) = 14;
+		GOTO_COST(l_t02, l_t08) = 16;
+		GOTO_COST(l_t08, l_t02) = 16;
+		GOTO_COST(l_t02, l_t09) = 17;
+		GOTO_COST(l_t09, l_t02) = 17;
+		GOTO_COST(l_t03, l_t04) = 16;
+		GOTO_COST(l_t04, l_t03) = 16;
+		GOTO_COST(l_t03, l_t05) = 15;
+		GOTO_COST(l_t05, l_t03) = 15;
+		GOTO_COST(l_t03, l_t06) = 15;
+		GOTO_COST(l_t06, l_t03) = 15;
+		GOTO_COST(l_t03, l_t07) = 15;
+		GOTO_COST(l_t07, l_t03) = 15;
+		GOTO_COST(l_t03, l_t08) = 11;
+		GOTO_COST(l_t08, l_t03) = 11;
+		GOTO_COST(l_t03, l_t09) = 11;
+		GOTO_COST(l_t09, l_t03) = 11;
+		GOTO_COST(l_t04, l_t05) = 13;
+		GOTO_COST(l_t05, l_t04) = 13;
+		GOTO_COST(l_t04, l_t06) = 13;
+		GOTO_COST(l_t06, l_t04) = 13;
+		GOTO_COST(l_t04, l_t07) = 10;
+		GOTO_COST(l_t07, l_t04) = 10;
+		GOTO_COST(l_t04, l_t08) = 11;
+		GOTO_COST(l_t08, l_t04) = 11;
+		GOTO_COST(l_t04, l_t09) = 18;
+		GOTO_COST(l_t09, l_t04) = 18;
+		GOTO_COST(l_t05, l_t06) = 15;
+		GOTO_COST(l_t06, l_t05) = 15;
+		GOTO_COST(l_t05, l_t07) = 12;
+		GOTO_COST(l_t07, l_t05) = 12;
+		GOTO_COST(l_t05, l_t08) = 19;
+		GOTO_COST(l_t08, l_t05) = 19;
+		GOTO_COST(l_t05, l_t09) = 12;
+		GOTO_COST(l_t09, l_t05) = 12;
+		GOTO_COST(l_t06, l_t07) = 13;
+		GOTO_COST(l_t07, l_t06) = 13;
+		GOTO_COST(l_t06, l_t08) = 15;
+		GOTO_COST(l_t08, l_t06) = 15;
+		GOTO_COST(l_t06, l_t09) = 11;
+		GOTO_COST(l_t09, l_t06) = 11;
+		GOTO_COST(l_t07, l_t08) = 18;
+		GOTO_COST(l_t08, l_t07) = 18;
+		GOTO_COST(l_t07, l_t09) = 17;
+		GOTO_COST(l_t09, l_t07) = 17;
+		GOTO_COST(l_t08, l_t09) = 18;
+		GOTO_COST(l_t09, l_t08) = 18;
+		
+		DO_COST(r00, a00) = 17;
+		DO_COST(r00, a01) = 100;  // given a high cost implies that robot does not have this ability
+		DO_COST(r00, a02) = 100;  // given a high cost implies that robot does not have this ability
+		DO_COST(r01, a00) = 17;
+		DO_COST(r01, a01) = 100;
+		DO_COST(r01, a02) = 100;
+		DO_COST(r02, a00) = 100;
+		DO_COST(r02, a01) = 10;
+		DO_COST(r02, a02) = 100;
+		DO_COST(r03, a00) = 100;
+		DO_COST(r03, a01) = 10;
+		DO_COST(r03, a02) = 100;
+		DO_COST(r04, a00) = 100;
+		DO_COST(r04, a01) = 100;
+		DO_COST(r04, a02) = 20;
+		
+		TASK(t00, a00, l_t00);
+		TASK(t01, a00, l_t01);
+		TASK(t02, a01, l_t02);
+		TASK(t03, a00, l_t03);
+		TASK(t04, a00, l_t04);
+		TASK(t05, a01, l_t05);
+		TASK(t06, a00, l_t06);
+		TASK(t07, a00, l_t07);
+		TASK(t08, a01, l_t08);
+		TASK(t09, a02, l_t09);
+		
+		TASK_UTILITY(t00) = 84;
+		TASK_UTILITY(t01) = 91;
+		TASK_UTILITY(t02) = 84;
+		TASK_UTILITY(t03) = 88;
+		TASK_UTILITY(t04) = 89;
+		TASK_UTILITY(t05) = 93;
+		TASK_UTILITY(t06) = 94;
+		TASK_UTILITY(t07) = 97;
+		TASK_UTILITY(t08) = 97;
+		TASK_UTILITY(t09) = 99;
+	};
+
+	init-state {
+		robot-at(r00, l_r00);
+		robot-at(r01, l_r01);
+		robot-at(r02, l_r02);
+		robot-at(r03, l_r03);
+		robot-at(r04, l_r04);
+		
+		pre-task-finished(t00, t01) = false;
+		pre-task-finished(t01, t02) = false;
+		
+		pre-task-finished(t03, t04) = false;
+		pre-task-finished(t04, t05) = false;
+		
+		pre-task-finished(t06, t07) = false;
+		pre-task-finished(t07, t08) = false;
+		
+		pre-task-finished(t02, t09) = false;
+		pre-task-finished(t05, t09) = false;
+		pre-task-finished(t08, t09) = false;
+		
+	};
+
+	horizon = 10;
+
+	discount = 0.8;
+
+}

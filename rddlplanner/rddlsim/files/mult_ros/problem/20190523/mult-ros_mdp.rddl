@@ -1,0 +1,194 @@
+/////////////////////////////////////////////////////////////////////////////////
+//                                                                             //
+//                                                                             //
+// RDDL MDP version of the IPC 2018 Cooperative Recon domain.                  //
+//                                                                             //
+//                                                                             //
+// Based on the Recon domain that has been created for the probabilistic       //
+// tracks of IPC 2011 by                                                       //
+//                                                                             //
+//        Tom Walsh (thomasjwalsh [at] gmail.com)                              //
+//                                                                             //
+// and modified for the probabilistic tracks of IPC 2018 by                    //
+//        Thomas Keller (tho.keller [at] unibas.ch).                           //
+//                                                                             //
+//                                                                             //
+// In the Cooperative Recon domain, the planner controls one or more planetary //
+// rovers that examine objects of interest in order to detect life and take a  //
+// picture of it. As in the Recon domain of IPC 2011, first has to be detected //
+// before life is detected, and negative results (one for life, two for water) //
+// contaminate the object of interest such that no life can be detected.       //
+//                                                                             //
+// The main changes compared to the IPC 2011 Recon domain that have been       //
+// realized are as follows:                                                    //
+//                                                                             //
+// 1. In the 2011 version, taking pictures with a damaged camera lead to a     //
+//    negative reward, which is never a reasonable option (not taking a        //
+//    picture at all is always better). Here, we grant a lower positive        //
+//    reward instead, which makes for interesting decisions between returning  //
+//    to the base to repair the camera or go with the lower reward.            //
+//                                                                             //
+// 2. Hazards are replaced by a more general mechanism where probabilities     //
+//    that a ability is damaged are directly linked to the cell. However, the     //
+//    instance generation script still distributed hazards over the grid to    //
+//    compute these probabilities. The main difference is that hazards can     //
+//    overlap in a way that the probabilities accumulate.                      //
+//                                                                             //
+// 3. In the IPC 2011 instance, all rovers were equipped with a ability to detect //
+//    water, a ability to detect life and a camera. In the instances for IPC      //
+//    2018, some rovers are only partially equipped such that the rovers have  //
+//    to collaborate to perform all required tests.                            //
+//                                                                             //
+// 4. To emphasize colaboration even more, there is a novel support-robot      //
+//    action that rovers can take to increase the probability for successfully //
+//    detecting life or water. This leads to interesting decisions between     //
+//    optimizing the probability of successfully detecting life and the number //
+//    of objects of interest that can be examined within the finite horizon.   //
+//                                                                             //
+//                                                                             //
+/////////////////////////////////////////////////////////////////////////////////
+
+domain mult-ros_mdp {
+    requirements { 
+        reward-deterministic,
+        preconditions
+    };
+    
+
+    types { 
+        xpos               : object;
+        ypos               : object; 
+        task               : object;
+        robot              : object;
+        ability            : object;
+    };
+    
+  	
+    pvariables {
+        //////////////////// non-fluents ////////////////////
+
+        // connectivity of the grid
+        ADJACENT_UP(ypos,ypos)                       : { non-fluent, bool, default = false };
+        ADJACENT_DOWN(ypos,ypos)                     : { non-fluent, bool, default = false };
+        ADJACENT_RIGHT(xpos, xpos)                   : { non-fluent, bool, default = false };
+        ADJACENT_LEFT(xpos,xpos)                     : { non-fluent, bool, default = false };
+
+        // location of task
+        TASK_AT(task, xpos, ypos)    : { non-fluent, bool, default = false };
+
+        // ability is mounted on robot
+        HAS_ABILITY(robot, ability)                        : { non-fluent, bool, default = false };
+
+        // task requirements
+        TASK_REQ(task, ability)                        : { non-fluent, bool, default = false };
+
+
+        // reward for a task
+        TASK_REWARD(task)          : { non-fluent, real, default = 10.0 };
+        PROB_SUCCESS : { non-fluent, real, default = 1 };
+
+        //////////////////// state-fluents ////////////////////
+
+
+        // a task has been done
+        taskDone(task)             : { state-fluent, bool, default = false };
+
+        // the location of a robot
+        robot-at(robot, xpos, ypos)                  : { state-fluent, bool, default = false };
+
+        check-done(task) : { state-fluent, bool, default = true };
+
+        //////////////////// action-fluents ////////////////////
+
+        // move a robot upwards
+        up(robot)                                    : { action-fluent, bool, default = false };
+
+        // move a robot downwards
+        down(robot)                                  : { action-fluent, bool, default = false };
+
+        // move a robot to the left
+        left(robot)                                  : { action-fluent, bool, default = false };
+
+        // move a robot to the right
+        right(robot)                                 : { action-fluent, bool, default = false };
+
+        // have a robot use a ability on an object of interest
+        use-ability-do(robot, ability, task)         : { action-fluent, bool, default = false };
+
+    };
+
+
+    cpfs {
+
+        taskDone'(?t) =
+            // remains true of becomes true if a task has been done
+            if ( exists_{ ?r: robot, ?a: ability } [ use-ability-do(?r, ?a, ?t) & TASK_REQ(?t, ?a) & Bernoulli(PROB_SUCCESS) ] )
+              then true
+            else
+              taskDone(?t);
+
+        // reward counts for only once.
+        check-done'(?t) = if ( taskDone(?t) )
+                          then false
+                        else
+                          check-done(?t);
+
+        robot-at'(?a, ?x, ?y) =
+            // robot moves to the left and ends up here 
+            if ( left(?a) & ( exists_{ ?x2 : xpos } [ robot-at(?a, ?x2, ?y) & ADJACENT_LEFT(?x, ?x2) ] ) )
+                then true
+            // robot moves to the right and ends up here 
+            else if( right(?a) & ( exists_{ ?x2 : xpos } [ robot-at(?a, ?x2, ?y) & ADJACENT_RIGHT(?x, ?x2) ] ) )
+                then true
+            // robot moves upwards and ends up here 
+            else if( up(?a) & ( exists_{ ?y2 : ypos } [ robot-at(?a, ?x, ?y2) & ADJACENT_UP(?y, ?y2) ] ) )
+                then true
+            // robot moves downwards and ends up here 
+            else if( down(?a) & ( exists_{ ?y2 : ypos } [ robot-at(?a, ?x, ?y2) & ADJACENT_DOWN(?y, ?y2) ] ) )
+                then true
+            // robot moves, but it doesn't end up here
+            else if ( left(?a) | right(?a) | up(?a) | down(?a) )
+                then false
+            // robot doesn't move, so it is here only if it was already here
+            else robot-at(?a, ?x, ?y);
+    };
+
+
+    reward = (sum_{?t : task}[ TASK_REWARD(?t) * (taskDone(?t) & check-done(?t))]);
+//        ( sum_{?t : task}
+//            // get reward for a task
+//            [ ( TASK_REWARD(?t) * exists_{ ?r: robot, ?a: ability } [ use-ability-do(?r, ?a, ?t) & TASK_REQ(?t, ?a) ] ) ] );
+
+
+
+
+    action-preconditions {
+
+        // dont move outside of the grid
+        forall_{ ?a : robot } [ left(?a) => exists_{ ?x1 : xpos, ?x2 : xpos, ?y : ypos } [ robot-at(?a, ?x1, ?y) & ADJACENT_LEFT(?x2, ?x1) ] ];
+        forall_{ ?a : robot } [ right(?a) => exists_{ ?x1 : xpos, ?x2 : xpos, ?y : ypos } [ robot-at(?a, ?x1, ?y) & ADJACENT_RIGHT(?x2, ?x1) ] ];
+        forall_{ ?a : robot } [ up(?a) => exists_{ ?x : xpos, ?y1 : ypos, ?y2 : ypos } [ robot-at(?a, ?x, ?y1) & ADJACENT_UP(?y2, ?y1) ] ];
+        forall_{ ?a : robot } [ down(?a) => exists_{ ?x : xpos, ?y1 : ypos, ?y2 : ypos } [ robot-at(?a, ?x, ?y1) & ADJACENT_DOWN(?y2, ?y1) ] ];
+
+        // only use abilities on this robot
+        forall_{ ?r : robot, ?a : ability, ?t : task }
+            [ use-ability-do(?r, ?a, ?t) => HAS_ABILITY(?r, ?a) ];
+
+        // only use ability on task at the same location
+        forall_{ ?r : robot, ?a : ability, ?t : task }
+            [ use-ability-do(?r, ?a, ?t) => ( exists_{ ?x : xpos, ?y : ypos } [ robot-at(?r, ?x, ?y) & TASK_AT(?t, ?x, ?y) ] ) ];
+
+        // only do tasks that have not been done before
+        forall_{ ?r : robot, ?a : ability, ?t : task }
+            [ use-ability-do(?r, ?a, ?t) => ( ~taskDone(?t) ) ];
+
+        // tasks can only be done by one robot at a time
+        forall_{ ?t : task } [ ( sum_{ ?r : robot, ?a : ability } [ use-ability-do(?r, ?a, ?t) ] ) <= 1 ];
+
+        // each robot may perform one action per time step
+        forall_{ ?r : robot } [ ( left(?r) + right(?r) + up(?r) + down(?r) +
+                                  ( sum_{ ?a : ability, ?t : task } [ use-ability-do(?r, ?a, ?t) ] ) ) <= 1 ];
+    };
+}
+
+

@@ -1,0 +1,141 @@
+////////////////////////////////////////////////////////////////////
+//
+// Multi ROS Robot Domain
+//
+// Author: Dongning Rao (raodn [at] gdut.edu.cn)
+//
+// In a map, robots must get to task positions to perform actions and avoid obstacles,
+// along with tasks like communication.
+// Different robots have random abilities.
+// goto action:  can call navigation
+// moveit action: can call Moveit! for motion plannings
+// other action: e.g., communication
+////////////////////////////////////////////////////////////////////
+
+domain multi_ros_robot_mdp {
+  requirements {
+    reward-deterministic,
+    preconditions
+  };
+
+
+  types {
+    robot              : object;   // necessary for multi-robot planning
+    ability            : object;   // different robots can have different abilities
+    location           : object;   // robots & goals locations
+    task               : object;   // task can be defined flexible
+  };
+    
+  	
+  pvariables {
+
+    //////////////////// non-fluents ////////////////////
+
+    // TASK
+    TASK(task, ability, location)                : { non-fluent, bool, default = false };
+
+    // navigation cost
+    GOTO_COST(location, location)                : { non-fluent, real, default = 10 };
+
+    // executing an action consumes cost
+    DO_COST(robot, ability)                      : { non-fluent, real, default = 1 };
+
+    // task utility
+    TASK_UTILITY(task)                           : { non-fluent, real, default = 100 };
+
+    // move success probability
+    MOVE_PROB(robot)                             : {non-fluent, real, default = 0.8};
+
+    // do success probability
+    DO_PROB(robot)                               : {non-fluent, real, default = 0.7};
+
+    //////////////////// interm-fluents ////////////////////
+
+    // in one step robots moves successfully or not
+    move-success(robot)                          : { interm-fluent , bool , level = 1 };
+
+    // in one step robots executes *do action* successfully or not
+    do-success(robot)                            : { interm-fluent , bool , level = 1 };
+
+    //////////////////// state-fluents ////////////////////
+
+    // robot-at
+    robot-at(robot, location)                    : { state-fluent, bool, default = false };
+
+    // robot aims to finish tasks
+    done(task)                                   : { state-fluent, bool, default = false };
+
+    // we calculate task utility only once, intern fluent may be better ?
+    check-done(task)                             : { state-fluent, bool, default = true };
+
+    //////////////////// action-fluents ////////////////////
+
+    // robot owns ability
+    do(robot, ability)                           : { action-fluent, bool, default = false };
+
+    // robot navigation action
+    goto(robot, location)                        : { action-fluent, bool, default = false };
+
+  };
+
+
+  cpfs {
+
+    // interm-fluents used to determine whether robot executes action success
+    // whether robot navigation action executes successfully
+    move-success(?r) = Bernoulli( MOVE_PROB(?r) );
+
+    // whether robot *do* action executes successfully
+    do-success(?r) = Bernoulli( DO_PROB(?r) );
+
+    // robot location
+		robot-at'(?r, ?l) = if (goto(?r,?l) & move-success(?r) )
+                          then true
+                        else if (exists_{?l_nav : location} [goto(?r, ?l_nav) & move-success(?r)] )
+                          then false
+                        else  robot-at(?r,?l); // state persists
+
+    done'(?g) = if (exists_{?r : robot, ?a : ability, ?l : location}
+                  // robot at TASK position executes do action
+                  [ do(?r, ?a) & do-success(?r) & TASK(?g, ?a, ?l) & robot-at(?r, ?l) ])
+                  then true
+                else
+                  done(?g);
+
+    check-done'(?t) = if ( done(?t) )
+                      then false
+                    else
+                      check-done(?t);
+
+  };
+
+
+    // Reward is a sum of penalties for those actions, and task finished
+             //  1: task utilities
+    reward = [sum_{?t : task} [ [done(?t) & check-done(?t) ] * TASK_UTILITY(?t)] ]
+             //  2: *do* action cost
+           - [sum_{?r : robot, ?a : ability} [ do(?r, ?a)] * DO_COST(?r, ?a)]
+             //  3: *goto* action cost
+           - [sum_{?r : robot, ?l : location, ?l_nav : location}
+           [ [ move-success(?r) & robot-at(?r, ?l) & goto(?r, ?l_nav) ] * GOTO_COST(?l, ?l_nav) ]]
+           - [sum_{?t : task} [ [~done(?t)] * [TASK_UTILITY(?t) / 10] ] ];
+
+
+    action-preconditions {
+      // Robot at exactly one location
+      //forall_{?r : robot} [ [sum_{?l : location} [ robot-at(?r, ?l)] ] == 1 ];
+
+      // one do action for one robot at a time
+      forall_{?r : robot} [ [sum_{?a : ability} [ do(?r,?a)] ] <= 1];
+
+      // one navigation action for one robot at a time
+      forall_{?r : robot} [ [sum_{?l : location} [ goto(?r, ?l)] ] <= 1 ];
+    };
+
+    state-invariants{ // not used in IPPC2018
+      // robot at exactly one location
+      forall_{?r : robot} [ [sum_{?l : location} [ robot-at(?r, ?l)] ] == 1 ];
+    };
+}
+
+

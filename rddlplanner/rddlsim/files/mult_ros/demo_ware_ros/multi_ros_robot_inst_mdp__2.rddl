@@ -1,0 +1,46 @@
+instance multi_ros_robot_inst_warehouse_demo_2 {
+
+	domain = multi_ros_robot_mdp;
+
+	objects {
+		robot : { r00,r01 };
+		ability : { a00_pick, a01_place, a02_pack};
+		location : { l_r00,l_r01,l_loc1,l_loc2,l_loc3,l_loc4,l_loc5,l_loc6,l_loc7};
+		task : { t00_pick_obj1, t01_pick_obj2, t02_place_obj1, t03_place_obj2, t04_put_obj1_into_box, t05_put_obj2_into_box, t06_pack_all};
+  };
+
+	non-fluents {
+		MOVE_PROB(r00) = 0.9;
+		MOVE_PROB(r01) = 0.9;
+		DO_PROB(r00) = 0.9;
+		DO_PROB(r01) = 0.9;
+
+		// tasks
+		TASK(t00_pick_obj1, a00_pick, l_loc1);
+		TASK(t01_pick_obj2, a00_pick, l_loc2);
+		TASK(t02_place_obj1, a01_place, l_loc3);
+		TASK(t03_place_obj2, a01_place, l_loc4);
+		TASK(t04_put_obj1_into_box, a02_pack, l_loc5);
+		TASK(t05_put_obj2_into_box, a02_pack, l_loc6);
+		TASK(t06_pack_all, a02_pack, l_loc7);
+		TASK_UTILITY(t06_pack_all) = 200;
+
+
+	};
+
+	init-state {
+		robot-at(r00, l_r00);
+		robot-at(r01, l_r01);
+        pre-task-finished(t00_pick_obj1, t02_place_obj1) = false;
+        pre-task-finished(t01_pick_obj2, t03_place_obj2) = false;
+        pre-task-finished(t02_place_obj1, t04_put_obj1_into_box) = false;
+        pre-task-finished(t03_place_obj2, t05_put_obj2_into_box) = false;
+        pre-task-finished(t04_put_obj1_into_box, t06_pack_all) = false;
+        pre-task-finished(t05_put_obj2_into_box, t06_pack_all) = false;
+	};
+
+	horizon = 20;
+
+	discount = 0.8;
+
+}

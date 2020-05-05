@@ -1,0 +1,69 @@
+instance multi_ros_robot_inst_mdp__2 {
+
+  domain = multi_ros_robot_mdp;
+
+  objects {
+    robot  : {r1,r2};
+    ability : {a1,a2,a3};
+    xpos               : { x00, x01, x02, x03, x04, x05, x06, x07, x08, x09 };
+    ypos               : { y00, y01, y02, y03, y04, y05, y06, y07, y08, y09 };
+    goal   : {g1,g2};
+  };
+
+  non-fluents {
+
+    // ADJACENCY
+// ADJACENCY
+        ADJACENT_LEFT(x00, x01);
+        ADJACENT_RIGHT(x01, x00);
+        ADJACENT_LEFT(x01, x02);
+        ADJACENT_RIGHT(x02, x01);
+        ADJACENT_LEFT(x02, x03);
+        ADJACENT_RIGHT(x03, x02);
+        ADJACENT_LEFT(x03, x04);
+        ADJACENT_RIGHT(x04, x03);
+        ADJACENT_LEFT(x04, x05);
+        ADJACENT_RIGHT(x05, x04);
+        ADJACENT_LEFT(x05, x06);
+        ADJACENT_RIGHT(x06, x05);
+        ADJACENT_LEFT(x06, x07);
+        ADJACENT_RIGHT(x07, x06);
+        ADJACENT_LEFT(x07, x08);
+        ADJACENT_RIGHT(x08, x07);
+        ADJACENT_LEFT(x08, x09);
+        ADJACENT_RIGHT(x09, x08);
+        ADJACENT_DOWN(y00, y01);
+        ADJACENT_UP(y01, y00);
+        ADJACENT_DOWN(y01, y02);
+        ADJACENT_UP(y02, y01);
+        ADJACENT_DOWN(y02, y03);
+        ADJACENT_UP(y03, y02);
+        ADJACENT_DOWN(y03, y04);
+        ADJACENT_UP(y04, y03);
+        ADJACENT_DOWN(y04, y05);
+        ADJACENT_UP(y05, y04);
+        ADJACENT_DOWN(y05, y06);
+        ADJACENT_UP(y06, y05);
+        ADJACENT_DOWN(y06, y07);
+        ADJACENT_UP(y07, y06);
+        ADJACENT_DOWN(y07, y08);
+        ADJACENT_UP(y08, y07);
+        ADJACENT_DOWN(y08, y09);
+        ADJACENT_UP(y09, y08);
+
+    GOAL(g1,a2,x00,y02);
+    GOAL(g2,a1,x02,y02);
+  };
+
+  init-state {
+    robot-at(r1,x00,y00);
+    robot-at(r2,x00,y01);
+  };
+
+  //max-nondef-actions = 4;
+
+  horizon = 10;
+
+  discount = 1.0;
+
+}

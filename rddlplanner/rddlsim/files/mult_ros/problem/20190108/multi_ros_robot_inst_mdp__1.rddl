@@ -1,0 +1,40 @@
+instance multi_ros_robot_inst_mdp__1 {
+
+  domain = multi_ros_robot_mdp;
+
+  objects {
+    robot  : {r1,r2};
+    ability : {a1,a2,a3};
+    xpos   : { x00, x01, x02 };
+    ypos   : { y00, y01, y02 };
+    goal   : {g1,g2};
+  };
+
+  non-fluents {
+
+    // ADJACENCY
+    ADJACENT_LEFT(x00, x01);
+    ADJACENT_RIGHT(x01, x00);
+    ADJACENT_LEFT(x01, x02);
+    ADJACENT_RIGHT(x02, x01);
+    ADJACENT_DOWN(y00, y01);
+    ADJACENT_UP(y01, y00);
+    ADJACENT_DOWN(y01, y02);
+    ADJACENT_UP(y02, y01);
+
+    GOAL(g1,a2,x00,y02);
+    GOAL(g2,a1,x02,y02);
+  };
+
+  init-state {
+    robot-at(r1,x00,y00);
+    robot-at(r2,x00,y01);
+  };
+
+  //max-nondef-actions = 4;
+
+  horizon = 10;
+
+  discount = 1.0;
+
+}

@@ -1,0 +1,67 @@
+/////////////////////////////////////////////////////////////////////////////////
+//                                                                             //
+//                                                                             //
+// RDDL MDP version of Wildlife Preserve instance #01 for IPC 2018 by Fei Fang //
+// (feifang [at] cmu.edu), Thanh Hong Nguyen (thanhhng [at] umich.edu) and     //
+// Thomas Keller (tho.keller [at] unibas.ch), based on the papers "When        //
+// Security Games Go Green: Designing Defender Strategies to Prevent Poaching  //
+// and Illegal Fishing" by Fei Fang, Peter Stone and Milind Tambe (IJCAI 2015) //
+// and "Analyzing the Effectiveness of Adversary Modeling in Security Games"   //
+// by Thanh H. Nguyen, Rong Yang, Amos Azaria, Sarit Kraus and Milind Tambe    //
+// (AAAI 2013).                                                                //
+//                                                                             //
+//                                                                             //
+/////////////////////////////////////////////////////////////////////////////////
+
+instance wildlife-preserve_inst_mdp__01 {
+    domain = wildlife-preserve_01_mdp;
+
+    objects {
+        ranger  : { r1 };
+        poacher : { p1 };
+    };
+
+    non-fluents {
+        DEFENDER-REWARD(@a1) = 12.38;
+        DEFENDER-PENALTY(@a1) = -3.99;
+        DEFENDER-REWARD(@a2) = 6.57;
+        DEFENDER-PENALTY(@a2) = -1.17;
+        DEFENDER-REWARD(@a3) = 9.62;
+        DEFENDER-PENALTY(@a3) = -14.10;
+        DEFENDER-REWARD(@a4) = 11.30;
+        DEFENDER-PENALTY(@a4) = -13.50;
+
+        // correlation between attacker reward and defender penalty as well as
+        // attacker penalty and defender reward is 1.00 for all poachers and all areas
+
+        // weights for poacher p1 are: w1 = -22.03, w2 = 0.82, w3 = 0.41
+        // reward for poacher p1 in area @a1 is: 3.99
+        // penalty for poacher p1 in area @a1 is: -12.38
+        // reward for poacher p1 in area @a2 is: 1.17
+        // penalty for poacher p1 in area @a2 is: -6.57
+        // reward for poacher p1 in area @a3 is: 14.10
+        // penalty for poacher p1 in area @a3 is: -9.62
+        // reward for poacher p1 in area @a4 is: 13.50
+        // penalty for poacher p1 in area @a4 is: -11.30
+
+        ATTACK-WEIGHT_0(p1, @a1) = 0.16783;
+        ATTACK-WEIGHT_1(p1, @a1) = 0.00000;
+        ATTACK-WEIGHT_0(p1, @a2) = 0.17821;
+        ATTACK-WEIGHT_1(p1, @a2) = 0.00000;
+        ATTACK-WEIGHT_0(p1, @a3) = 2080.74306;
+        ATTACK-WEIGHT_1(p1, @a3) = 0.00000;
+        ATTACK-WEIGHT_0(p1, @a4) = 640.00666;
+        ATTACK-WEIGHT_1(p1, @a4) = 0.00000;
+
+        POACHER-REMEMBERS(p1, @1);
+
+    };
+
+    init-state {
+        ~was-defended(@a1,@1);
+    };
+
+    horizon = 30;
+
+    discount = 1.0;
+}

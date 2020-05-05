@@ -1,0 +1,67 @@
+instance multi_ros_robot_inst_mdp__1 {
+
+	domain = multi_ros_robot_mdp;
+
+	objects {
+		robot : {
+			tiago1,
+			tiago2 };
+		ability : {
+			a00_pick,
+			a01_place,
+			a02_pack };
+		location : { l_r00,l_r01,l_t00,l_t01,l_t02,l_t03,l_t04,l_t05,l_t06 };
+		task : {
+			task1,
+			task2,
+			task3,
+			task4,
+			task5,
+			task6,
+			task7 };
+  };
+
+	non-fluents {
+		MOVE_PROB(tiago1) = 0.9;
+		MOVE_PROB(tiago2) = 0.9;
+		DO_PROB(tiago1) = 0.9;
+		DO_PROB(tiago2) = 0.9;
+		GOTO_COST(l_r00, l_t00) = 6.906355692626097;
+		GOTO_COST(l_r00, l_t01) = 6.071746380128594;
+		GOTO_COST(l_r00, l_t02) = 4.748577320110742;
+		GOTO_COST(l_r00, l_t03) = 4.950562758175178;
+		GOTO_COST(l_r00, l_t04) = 5.707575018783093;
+		GOTO_COST(l_r00, l_t05) = 5.962780080433344;
+		GOTO_COST(l_r00, l_t06) = 6.6250399388075625;
+		GOTO_COST(l_r01, l_t00) = 7.647721412172449;
+		GOTO_COST(l_r01, l_t01) = 7.281381273700549;
+		GOTO_COST(l_r01, l_t02) = 3.855106124123929;
+		GOTO_COST(l_r01, l_t03) = 3.460668568903198;
+		GOTO_COST(l_r01, l_t04) = 4.766653115345971;
+		GOTO_COST(l_r01, l_t05) = 4.47394829409314;
+		GOTO_COST(l_r01, l_t06) = 5.53498088882883;
+		TASK_UTILITY(t00_pick_obj1) = 1;
+		TASK_UTILITY(t01_pick_obj2) = 1;
+		TASK_UTILITY(t02_place_obj1) = 1;
+		TASK_UTILITY(t03_place_obj2) = 1;
+		TASK_UTILITY(t04_put_obj1_into_box) = 1;
+		TASK_UTILITY(t05_put_obj2_into_box) = 1;
+		TASK_UTILITY(t06_pack_all) = 1;
+	};
+
+	init-state {
+		robot-at(tiago1, l_r00);
+		robot-at(tiago2, l_r01);
+		pre-task-finished(task1, task3) = false;
+		pre-task-finished(task2, task4) = false;
+		pre-task-finished(task3, task5) = false;
+		pre-task-finished(task4, task6) = false;
+		pre-task-finished(task5, task7) = false;
+		pre-task-finished(task6, task7) = false;
+	};
+
+	horizon = 10;
+
+	discount = 0.8;
+
+}

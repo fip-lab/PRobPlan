@@ -1,0 +1,77 @@
+function create_group_task {
+    HIERARCHY=$1
+    GROUPNAME=$2
+    echo $GROUPNAME	
+    cgcreate -a $USER:$USER_GROUP -t $USER:$USER_GROUP -g $HIERARCHY:$GROUPNAME
+}
+
+function remove_cgroup {
+    HIERARCHY=$1
+    GROUPNAME=$2
+    rmdir $CGROUPS_ROOT/$HIERARCHY/$GROUPNAME
+}
+
+function get_tasks_in_cgroup {
+    HIERARCHY=$1
+    GROUPNAME=$2
+    cat $CGROUPS_ROOT/$HIERARCHY/$GROUPNAME/tasks
+}
+
+function set_memory_limit {
+    echo $MEMORY_LIMIT
+    GROUPNAME=$1
+    MEMORY_LIMIT=$2
+    cgset -r memory.limit_in_bytes=$MEMORY_LIMIT $GROUPNAME
+    cgset -r memory.swappiness=0 $GROUPNAME	
+}
+
+function get_cpu_usage_in_ns {
+    GROUPNAME=$1
+    cgget -nv -r cpuacct.usage $GROUPNAME
+}
+
+function get_memory_usage {
+    GROUPNAME=$1
+    cgget -nv -r memory.max_usage_in_bytes $GROUPNAME
+}
+
+function print_resource_usage {
+    CPUACCT_GROUP=$1
+    MEMORY_GROUP=$2
+    CPU_USAGE=$(get_cpu_usage_in_ns $CPUACCT_GROUP)
+    MEMORY_USAGE=$(get_memory_usage $MEMORY_GROUP)
+    echo "Total CPU usage: $(($CPU_USAGE / 1000000))ms"
+    echo "Memory usage: $(($MEMORY_USAGE / 1024)) KB"
+}
+
+
+function monitor_client {
+    MONITORED_PID=$1
+    MEMORY_LIMIT=$2
+    MEMORY_GROUP=$3
+
+    # Start the monitoring process
+    (
+        REMAINING_MEMORY=$MEMORY_LIMIT
+        while [ "$REMAINING_MEMORY" -gt "0" ]; do
+            REMAINING_MEMORY=$(($MEMORY_LIMIT - $(get_memory_usage $MEMORY_GROUP)))
+	    sleep 5
+	done
+
+        (>&2 echo "Memory limit exceeded. Killing process.")
+
+        kill -KILL $(get_tasks_in_cgroup cpuacct $CPUACCT_GROUP) 2> /dev/null
+	kill -KILL $(get_tasks_in_cgroup memory $MEMORY_GROUP) 2> /dev/null
+    )&
+   MONITOR_PID=$!
+
+    # Wait for the monitored job to exit (either on its own or because it
+    # was killed by the monitor).
+   wait $MONITORED_PID
+   EXIT_CODE=$?
+   
+   kill -KILL $MONITOR_PID 2> /dev/null
+   wait $MONITOR_PID 2>/dev/null
+   
+   return $EXIT_CODE
+}

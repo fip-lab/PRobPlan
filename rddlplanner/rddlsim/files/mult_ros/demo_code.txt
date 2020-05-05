@@ -1,0 +1,252 @@
+#include <stdio.h>
+#include <map>
+#include <unistd.h>
+#include <iterator>
+#include <vector>
+#include <algorithm>
+#include <fstream>
+typedef std::vector< std::tuple<int,int,int> > init_tuple_list;
+typedef std::vector< std::tuple<int,int,int> > goal_tuple_list;
+//typedef std::vector< std::tuple<std::string,std::string>>
+ability_tuple_list;
+#ifdef RobotEnv
+// include head files
+#else
+// define constants
+#define xRange 5
+#define yRange 5
+#define numberOfRobot 2
+#define robotNamePrefix "robot"
+#define numberOfMoveitActions 2
+#define moveitActionNamePrefix "MoveitAction"
+#define numberOfGoals 3
+#define OtherActionName "OtherAction"
+#define numberOfOtherAction 1
+#define numberOfAbility 3 // This should be <= (numberOfRobot*
+numberOfMoveitActions)
+#define probGotoDefault 0.9
+#define gotoCostDefault 1
+#define probDoDefault 1
+#define goalUtilityDefault 100
+#define rddlsimPath "/mnt/d/projects/ecl-workspace/rddlsim-master"
+#define problemName "multi_ros_robot_inst_mdp__1"
+#define tempFilePath "/mnt/d/projects/r2files"
+#define problemFile
+"/mnt/d/projects/r2files/multi_ros_robot_inst_mdp__1.rddl"
+#define planFile "/mnt/d/projects/r2files/plan.txt"
+#define rddlPlannerCall "./run rddl.sim.Simulator /mnt/d/projects/r2files
+rddl.policy.SPerseusSPUDDPolicy multi_ros_robot_inst_mdp__1 | grep \"
+Action taken:\" | cut -c19- > /mnt/d/projects/r2files/plan.txt "
+#endif
+/*
+* 1 Using Multi-robot SLAM, mrpt_slam, to get Map and initial state;
+* 2 Geting Goal and Constraints from Speech Command, pocketsphinx;
+* 3 Generating RDDL files;
+* 4 Call rddl planners to get plan;
+* 5 Executing plan, for 3 types of actions:
+* a) goto, calling Navigation stack;
+* b) robot_action, calling Moveit;
+* c) sending_msg, calling Webservice, Rosbridge ;
+*/
+//prepared for none-robot Env, two robot start from random position.
+std::tuple<int, int, int> get_init_tuple(int id)
+{
+return std::make_tuple(id, rand() % xRange, rand() % yRange);
+}
+//prepared for none-robot Env, actions tobe done at random position.
+std::tuple<int, int, int> get_goal_tuple(int id)
+{
+int randomActionNumber = rand() % (numberOfMoveitActions +
+numberOfOtherAction);
+return std::make_tuple(randomActionNumber, rand() % xRange, rand() %
+yRange);
+}
+int generate_problem(const init_tuple_list & itl, const goal_tuple_list &
+gtl){
+std::ofstream out;
+out.open(problemFile,std::ios::trunc);
+int i,j,iGoto,jGoto;
+out<<"non-fluents nf_multi_ros_robot_inst_mdp__1 {" <<"\n";
+out<<" domain = multi_ros_robot_mdp;" <<"\n";
+out<<" objects {" <<"\n";
+out<<" robot : { ";
+for(i=1;i<=numberOfRobot;i++)
+{
+if(i>1) out <<"," ;
+out << "r" << i;
+};
+out <<"};\n";
+out<<" action : { ";
+for(i=1;i<=(numberOfMoveitActions+numberOfOtherAction);i++)
+{
+if(i>1) out <<"," ;
+out << "a" << i;
+};
+out <<"};\n";
+out<<" xPos : { ";
+for(i=1;i<= xRange;i++)
+{
+if(i>1) out <<"," ;
+out << "x" << i;
+};
+out <<"};\n";
+out<<" yPos : { ";
+for(i=1;i<= yRange;i++)
+{
+if(i>1) out <<"," ;
+out << "y" << i;
+};
+out <<"};\n";
+out<<" goal : { ";
+for(i=1;i<= numberOfGoals;i++)
+{
+if(i>1) out <<"," ;
+out << "g" << i;
+};
+out <<"};\n";
+out<<" };" <<"\n";
+out<<"non-fluents {" <<"\n";
+for(i=1;i<=numberOfRobot;i++)
+out << " PROB_GOTO(r" << i <<") = " << probGotoDefault <<";\n";
+for(i=1;i<=numberOfRobot;i++)
+for(j=1;j<=(numberOfMoveitActions+numberOfOtherAction);j++)
+out << " DO_COST(r" << i << ",a"<< j <<") = " << probDoDefault <<";\n";
+for(i=1;i<=xRange;i++)
+for(j=1;j<=yRange;j++)
+for(iGoto=1;iGoto<=xRange;iGoto++)
+for(jGoto=1;jGoto<=yRange;jGoto++)
+out << " GOTO_COST(x" << i << ", y"<< j
+<<", xGoto" << iGoto << ", yGoto" << jGoto
+<<") = " << round(100*sqrt(pow(i-iGoto, 2)+pow(j-jGoto,2))) / 100.0 <<";\n";
+for(i=1;i<=numberOfRobot;i++)
+out << " GOAL_UTILITY(g" << i <<") = " << goalUtilityDefault <<";\n";
+i=1;
+for(goal_tuple_list::const_iterator it = gtl.begin(); it != gtl.end(); ++it)
+out << " GOAL(g" << i++ << ",a"<< std::get<0>(*it) <<", x" <<
+std::get<1>(*it) <<", y" << std::get<2>(*it) <<");\n";
+out <<" };\n";
+out <<"}\n";
+out <<"instance multi_ros_robot_inst_mdp__1 {\n";
+out <<" domain = multi_ros_robot_mdp;\n";
+out <<" non-fluents = nf_multi_ros_robot_inst_mdp__1;\n";
+out <<" init-state {\n";
+for(init_tuple_list::const_iterator it = itl.begin(); it != itl.end(); ++it)
+out << " robotAt(r" << std::get<0>(*it) <<", x" << std::get<1>(*it) <<",
+y" << std::get<2>(*it) <<");\n";
+out <<" };\n";
+out << " max-nondef-actions = " << floor(2*numberOfRobot) << ";\n";
+out << " horizon = 10;\n";
+out << " discount = 1.0;\n";
+out <<"}\n";
+out.close();
+return 0;
+}
+int main(int argc, char **argv) {
+ros::init(argc, argv, "prost_wrapper_node");
+// Start the node resource managers (communication, time, etc)
+ros::start();
+// Broadcast a simple log message
+ROS_INFO_STREAM("Prost Wrapper Started!");
+#ifdef RobotEnv
+// subscribe ros messages
+#else
+/* initialize random seed: */
+srand (time(NULL));
+#endif
+#ifdef RobotEnv
+// 1 Using Multi-robot SLAM, mrpt_slam, to get Map and initial state
+#else
+// seting <x, y robot> tuples
+init_tuple_list itl;
+for (int i=0; i < numberOfRobot; i++)
+itl.push_back(get_init_tuple(i));
+// TODO: prepare for navi, setting up Map
+#endif
+ROS_INFO_STREAM("Step Logger: initial state got!");
+#ifdef RobotEnv
+// 2 Geting Goal and Constraints from Speech Command, pocketsphinx
+#else
+// seting Goal and Constraints
+goal_tuple_list gtl;
+for (int i=0; i < numberOfGoals; i++)
+gtl.push_back(get_goal_tuple(i));
+// seting Constraints, the first one is the ability of robots
+// currently, for testing speed, not in the problem file.
+// prepare for rddl file
+#endif
+ROS_INFO_STREAM("Step Logger: goal got!");
+// 3 Generating RDDL files;
+// TODO: prepare for rddl planner
+generate_problem(itl, gtl);
+ROS_INFO_STREAM("Step Logger: problem file got!");
+// 4 calling rddl planner
+chdir(rddlsimPath);
+system(rddlPlannerCall);
+std::string actions;
+std::vector<std::string> vecOfAct;
+// Open the File
+std::ifstream pf(planFile);
+// Read the next line from File untill it reaches the end.
+while (std::getline(pf, actions))
+{
+// Line contains string of length > 0 then save it in vector
+if(actions.size() > 0)
+vecOfAct.push_back(actions);
+}
+ROS_INFO_STREAM("Step Logger: Plan got!");
+/* 5 Executing plan, for 3 types of actions:
+* a) goto, calling Navigation stack;
+* b) robot_action, calling Moveit;
+* c) sending_msg, calling Webservice;
+* ONLY actions for one robot will be executed,
+* the actions for THIS robot, default = r1.
+*/
+#ifdef RobotEnv
+// for all actions in the actions, call corresponding services
+// Create a client object for moveit or navi service.
+ros::ServiceClient moveitActionClient
+=nh.serviceClient<MoveitWrapper::Act>("moveit");
+ros::ServiceClient naviActionClient
+=nh.serviceClient<naviWrapper::Act>("navi");
+// the costmap for navi should be initialized, by mrpt_slam
+//Create the request and response objects.
+NaviWrapper::Act::Request nreq;
+NaviWrapper::Act::Response nresp;
+//Fill in the request data members. According to specific planner
+//Actually call the service
+bool successM=moveitActionClient.call(mreq,mresp);
+bool successN=naviActionClient.call(nreq,nresp);
+//Check for success and use the response.
+#else
+// Dummy output
+ROS_INFO_STREAM("Doing Actions!");
+for(std::vector<std::string>::const_iterator it = vecOfAct.begin(); it !=
+vecOfAct.end(); ++it) {
+// str.replace(str.find(str2),str2.length(),"preposition");
+actions=*it;
+while(actions.find("___")!=std::string::npos)
+actions = actions.replace(actions.find("___"),3,") and ");
+while(actions.find("__")!=std::string::npos)
+actions = actions.replace(actions.find("__"),2,"(");
+while(actions.find("_")!=std::string::npos)
+actions = actions.replace(actions.find("_"),2,",");
+actions = actions + ")";
+ROS_INFO_STREAM(actions);
+} #
+endif
+ROS_INFO_STREAM("Step Logger: Motion and Navi actions done!");
+#ifdef RobotEnv
+// c) sending_msg, calling Webservice;
+#else
+// Dummy output
+ROS_INFO_STREAM("Broadcasting Msg: !");
+#endif
+ROS_INFO_STREAM("Step Logger: other actions done!");
+#ifdef RobotEnv
+// Process ROS callbacks until receiving a SIGINT (ctrl-c)
+// ros::spin();
+#endif
+// Stop the node’s resources
+ros::shutdown();
+// Exit tranquilly
+}

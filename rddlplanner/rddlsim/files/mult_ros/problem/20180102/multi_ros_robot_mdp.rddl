@@ -1,0 +1,103 @@
+////////////////////////////////////////////////////////////////////
+//
+// Multi ROS Robot Domain
+//
+// Author: Dongning Rao (raodn [at] gdut.edu.cn)
+//
+// In a grid, robots must get to goal positions to perform actions and avoid obstacles, along with tasks like communication.
+// Different robots have random abilities.
+// goto action:  can call navigation 
+// moveit action: can call Moveit! for motion plannings
+// other action: e.g., communication
+////////////////////////////////////////////////////////////////////
+
+domain multi_ros_robot_mdp {
+	
+	requirements = {
+      reward-deterministic
+	};
+	types {
+		robot : object;  // necessary for multi-robot planning
+		action: object;  // differnet robots can have different abilities
+		xPos  : object;  // prepared for the navigation grid
+		yPos  : object;  // prepared for the navigation grid
+		goal  : object;  // goals can be defined flexiable
+	}; 
+	pvariables { 
+	
+      // non-state fluent
+
+      // goto prob and cost
+      PROB_GOTO(robot) : { non-fluent, real, default = 0.9 };
+      GOTO_COST(xPos, yPos, xPos, yPos) : { non-fluent, real, default = 1 };
+
+      // do prob and cost
+      PROB_DO(robot) : { non-fluent, real, default = 0.8 };
+      DO_COST(robot,action) : { non-fluent, real, default = 1 };
+
+      // position of xPos or yPos
+      X_POS(xPos) : { non-fluent, real, default = 0 };
+      Y_POS(yPos) : { non-fluent, real, default = 0 };
+
+      // goal utility
+      GOAL_UTILITY(goal) : {non-fluent, real, default = 100};
+
+      //goal, is the trajectory problem.
+      GOAL(goal, action, xPos, yPos): {non-fluent, bool, default = false};
+
+      // state-fluent
+      robotAt(robot, xPos, yPos) : {state-fluent, bool, default = false};
+      done(goal) : {state-fluent, bool, default = false};
+      go_success(robot) : { interm-fluent , bool , level = 1 };
+
+      // we calculate goal utility only once, interm fluent may be better ?
+      check_goal(goal) : {state-fluent, bool, default = true};
+
+      // action fluent
+      goto(robot, xPos, yPos) : {action-fluent, bool, default = false};
+      do(robot, action): {action-fluent, bool, default = false};
+
+	};
+  
+	cpfs {
+
+        go_success(?r) = Bernoulli (PROB_GOTO(?r));
+		robotAt'(?r,?x,?y) = if (goto(?r,?x,?y) ^ go_success(?r) )
+                       		    then true
+                       		else if (exists_{?xGoto : xPos, ?yGoto : yPos} [goto(?r,?xGoto,?yGoto) ^ go_success(?r)] )
+                       			then false
+                       		else  robotAt(?r,?x,?y); // state persists
+
+		done'(?g) = 
+		   if (exists_{?r: robot, ?a: action, ?x : xPos, ?y : yPos}
+		    // robot already at GOAL position or robot takes concurrent action: goto GOAL position and execute do
+		    [do(?r, ?a) ^ GOAL(?g,?a,?x,?y) ^ ( robotAt(?r, ?x, ?y) | goto(?r, ?x, ?y) ^ go_success(?r) )])
+				then true
+			else
+				done(?g);
+
+		check_goal'(?g) = if ( done(?g) )
+		                  then false
+		                else
+		                  check_goal(?g);
+
+	};
+  
+  	// Reward is a sum of penalties for those actions, and goals achieved
+	// For simplicity, we use the square of the distance as factor, rddl does not support absolute or sqrt functions. 
+	reward = [sum_{?g : goal} [ [done(?g) ^ check_goal(?g) ] * GOAL_UTILITY(?g)] ]
+	       - [sum_{?r : robot, ?a : action} [do(?r, ?a)]*DO_COST(?r, ?a)]
+		     - [sum_{?r : robot, ?x : xPos, ?y : yPos, ?xGoto : xPos, ?yGoto : yPos}[ [robotAt(?r,?x,?y) ^ goto(?r, ?xGoto, ?yGoto) ^ go_success(?r)] *
+		     (  [X_POS(?x) - X_POS(?xGoto)] * [X_POS(?x) - X_POS(?xGoto)]  +
+		       [Y_POS(?y) - Y_POS(?yGoto)] * [Y_POS(?y) - Y_POS(?yGoto)]  )  ] ];
+
+
+	state-action-constraints {
+        // Robot at exactly one position
+        //forall_{?r : robot} [(sum_{?x : xPos, ?y : yPos} [ robotAt(?r, ?x, ?y)] )== 1];
+        // one do action for one robot at a time
+        forall_{?r : robot} [(sum_{?a : action} [ do(?r,?a)] )<= 1];
+        // one goto for one robot at a time
+        forall_{?r : robot} [(sum_{?x : xPos, ?y : yPos} [ goto(?r, ?x, ?y)] )<= 1];
+	};
+}

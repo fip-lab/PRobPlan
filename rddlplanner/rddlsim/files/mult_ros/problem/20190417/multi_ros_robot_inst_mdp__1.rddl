@@ -1,0 +1,76 @@
+instance multi_ros_robot_inst_mdp__1 {
+
+	domain = multi_ros_robot_mdp;
+
+	objects {
+		robot : { r00,r01 };
+		ability : { a00,a01 };
+		location : { l_r00,l_r01,l_t00,l_t01,l_t02,l_t03 };
+		task : { t00,t01,t02,t03 };
+  };
+
+	non-fluents {
+		MOVE_PROB(r00) = 0.9;
+		MOVE_PROB(r01) = 0.9;
+		DO_PROB(r00) = 0.9;
+		DO_PROB(r01) = 0.9;
+		GOTO_COST(l_r00, l_r01) = 17;
+		GOTO_COST(l_r01, l_r00) = 17;
+		GOTO_COST(l_r00, l_t00) = 19;
+		GOTO_COST(l_t00, l_r00) = 19;
+		GOTO_COST(l_r00, l_t01) = 10;
+		GOTO_COST(l_t01, l_r00) = 10;
+		GOTO_COST(l_r00, l_t02) = 10;
+		GOTO_COST(l_t02, l_r00) = 10;
+		GOTO_COST(l_r00, l_t03) = 16;
+		GOTO_COST(l_t03, l_r00) = 16;
+		GOTO_COST(l_r01, l_t00) = 18;
+		GOTO_COST(l_t00, l_r01) = 18;
+		GOTO_COST(l_r01, l_t01) = 15;
+		GOTO_COST(l_t01, l_r01) = 15;
+		GOTO_COST(l_r01, l_t02) = 12;
+		GOTO_COST(l_t02, l_r01) = 12;
+		GOTO_COST(l_r01, l_t03) = 10;
+		GOTO_COST(l_t03, l_r01) = 10;
+		GOTO_COST(l_t00, l_t01) = 19;
+		GOTO_COST(l_t01, l_t00) = 19;
+		GOTO_COST(l_t00, l_t02) = 19;
+		GOTO_COST(l_t02, l_t00) = 19;
+		GOTO_COST(l_t00, l_t03) = 15;
+		GOTO_COST(l_t03, l_t00) = 15;
+		GOTO_COST(l_t01, l_t02) = 14;
+		GOTO_COST(l_t02, l_t01) = 14;
+		GOTO_COST(l_t01, l_t03) = 10;
+		GOTO_COST(l_t03, l_t01) = 10;
+		GOTO_COST(l_t02, l_t03) = 15;
+		GOTO_COST(l_t03, l_t02) = 15;
+		DO_COST(r00, a00) = 14;
+		DO_COST(r00, a01) = 15;
+		DO_COST(r01, a00) = 19;
+		DO_COST(r01, a01) = 12;
+		TASK(t00, a01, l_t00);
+		TASK(t01, a00, l_t01);
+		TASK(t02, a01, l_t02);
+		TASK(t03, a00, l_t03);
+		TASK_UTILITY(t00) = 100;
+		TASK_UTILITY(t01) = 100;
+		TASK_UTILITY(t02) = 100;
+		TASK_UTILITY(t03) = 100;
+		TASK_PRIORITY(t00) = 2;
+		TASK_PRIORITY(t01) = 2;
+		TASK_PRIORITY(t02) = 1;
+		TASK_PRIORITY(t03) = 1;
+	};
+
+	init-state {
+		robot-at(r00, l_r00);
+		robot-at(r01, l_r01);
+		pre-task-finished(t00, t01) = true;
+		pre-task-finished(t02, t03) = true;
+	};
+
+	horizon = 10;
+
+	discount = 0.9;
+
+}

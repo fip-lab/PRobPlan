@@ -1,0 +1,83 @@
+instance multi_ros_robot_inst_mdp__2 {
+
+  domain = multi_ros_robot_mdp;
+
+  objects {
+    robot : {r1,r2,r3,r4};
+    action : {a1,a2,a3};
+    xPos : {x1,x2,x3,x4,x5,x6,x7,x8,x9,x10};
+    yPos : {y1,y2,y3,y4,y5,y6,y7,y8,y9,y10};
+    goal : {g1,g2,g3,g4,g5,g6,g7,g8};
+  };
+
+  non-fluents {
+    PROB_GOTO(r1) = 0.9;
+    PROB_GOTO(r2) = 0.9;
+    PROB_GOTO(r3) = 0.9;
+    PROB_GOTO(r4) = 0.9;
+    DO_COST(r1,a1) = 1;
+    DO_COST(r1,a2) = 1;
+    DO_COST(r1,a3) = 1;
+    DO_COST(r2,a1) = 1;
+    DO_COST(r2,a2) = 1;
+    DO_COST(r2,a3) = 1;
+    DO_COST(r3,a1) = 1;
+    DO_COST(r3,a2) = 1;
+    DO_COST(r3,a3) = 1;
+    DO_COST(r4,a1) = 1;
+    DO_COST(r4,a2) = 1;
+    DO_COST(r4,a3) = 1;
+    // XPOS 
+    X_POS(x1)=1;
+    X_POS(x2)=2;
+    X_POS(x3)=3;
+    X_POS(x4)=4;
+    X_POS(x5)=5;
+    X_POS(x6)=6;
+    X_POS(x7)=7;
+    X_POS(x8)=8;
+    X_POS(x9)=9;
+    X_POS(x10)=10;
+    // YPOS 
+    Y_POS(y1)=1;
+    Y_POS(y2)=2;
+    Y_POS(y3)=3;
+    Y_POS(y4)=4;
+    Y_POS(y5)=5;
+    Y_POS(y6)=6;
+    Y_POS(y7)=7;
+    Y_POS(y8)=8;
+    Y_POS(y9)=9;
+    Y_POS(y10)=10;
+    GOAL_UTILITY(g1) = 100;
+    GOAL_UTILITY(g2) = 100;
+    GOAL_UTILITY(g3) = 100;
+    GOAL_UTILITY(g4) = 100;
+    GOAL_UTILITY(g5) = 100;
+    GOAL_UTILITY(g6) = 100;
+    GOAL_UTILITY(g7) = 100;
+    GOAL_UTILITY(g8) = 100;
+    GOAL(g1,a1,x10,y8);
+    GOAL(g2,a3,x5,y6);
+    GOAL(g3,a1,x2,y7);
+    GOAL(g4,a1,x10,y4);
+    GOAL(g5,a1,x8,y6);
+    GOAL(g6,a3,x3,y3);
+    GOAL(g7,a2,x3,y6);
+    GOAL(g8,a2,x2,y3);
+  };
+
+  init-state {
+    robotAt(r1,x8,y10);
+    robotAt(r2,x4,y10);
+    robotAt(r3,x8,y9);
+    robotAt(r4,x3,y4);
+  };
+
+  //max-nondef-actions = 8;
+
+  horizon = 10;
+
+  discount = 1.0;
+
+}
