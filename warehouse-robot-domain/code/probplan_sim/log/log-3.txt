@@ -1,0 +1,396 @@
+[INFO] [1587713972.740003, 0.000000]: init ros node successfully!
+init success -->> tiago1
+[INFO] [1587713973.242528, 116.277000]: tiago1 navigates to task1 is 6.28939269657
+[INFO] [1587713973.301101, 116.301000]: tiago1 navigates to task2 is 5.89262250631
+[INFO] [1587713973.341796, 116.317000]: tiago1 navigates to task3 is 3.455476759
+[INFO] [1587713973.379142, 116.325000]: tiago1 navigates to task4 is 3.83363240916
+[INFO] [1587713973.416393, 116.333000]: tiago1 navigates to task5 is 4.4200349968
+[INFO] [1587713973.449020, 116.344000]: tiago1 navigates to task6 is 4.78563038717
+[INFO] [1587713973.481146, 116.361000]: tiago1 navigates to task7 is 5.36231580676
+init success -->> tiago2
+[INFO] [1587713973.775762, 116.459000]: tiago2 navigates to task1 is 7.80400131528
+[INFO] [1587713973.810714, 116.469000]: tiago2 navigates to task2 is 7.38508096146
+[INFO] [1587713973.843677, 116.478000]: tiago2 navigates to task3 is 3.82846596927
+[INFO] [1587713973.874224, 116.488000]: tiago2 navigates to task4 is 3.45157043279
+[INFO] [1587713973.908247, 116.502000]: tiago2 navigates to task5 is 4.73610777765
+[INFO] [1587713973.944887, 116.515000]: tiago2 navigates to task6 is 4.4424173303
+[INFO] [1587713973.983802, 116.530000]: tiago2 navigates to task7 is 5.50146611864
+[INFO] [1587713974.070688, 116.565000]: dump to json file successfully!
+[INFO] [1587713974.073047, 116.566000]: problem json file got!
+[INFO] [1587713974.073274, 116.566000]: task_tag_dict: {'l_t00': 'task1', 'l_t01': 'task2', 'l_t02': 'task3', 'l_t03': 'task4', 'l_t04': 'task5', 'l_t05': 'task6', 'l_t06': 'task7'}
+[INFO] [1587713974.116541, 116.584000]: Waiting for gazebo services...
+[INFO] [1587713998.798354, 124.334000]: plan has successfully generated!
+[INFO] [1587713999.210538, 124.518000]: gen_robot_move_base_client_dict done!
+[INFO] [1587713999.210915, 124.518000]: goto_task_dispatch: {'tiago2': 'l_t01', 'tiago1': 'l_t00'}
+[INFO] [1587713999.223360, 124.522000]: tiago2 is movting to l_t01 (task2).
+[INFO] [1587713999.234555, 124.524000]: tiago1 is movting to l_t00 (task1).
+[INFO] [1587713999.235306, 124.524000]: Robot tiago2, [Result] State: 1
+[INFO] [1587713999.236080, 124.524000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714004.241432, 126.725000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714004.241694, 126.725000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714009.247002, 128.987000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714009.247268, 128.987000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714014.252607, 131.289000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714014.252903, 131.289000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714019.257963, 133.578000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714019.258306, 133.579000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714024.263466, 135.878000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714024.263729, 135.878000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714029.268853, 138.174000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714029.269130, 138.174000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714034.273142, 140.481000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714034.273366, 140.481000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714039.276908, 142.821000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714039.277222, 142.821000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714044.282365, 145.100000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714044.282623, 145.100000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714049.287675, 147.457000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714049.287971, 147.457000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714054.291686, 149.830000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714054.291931, 149.830000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714059.296937, 152.190000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714059.297210, 152.190000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714064.302093, 154.495000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714064.302462, 154.496000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714069.307683, 156.793000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714069.307924, 156.793000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714074.311696, 159.082000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714074.311964, 159.082000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714079.316753, 161.420000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714079.316985, 161.420000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714084.319696, 163.734000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714084.319988, 163.734000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714089.324852, 166.017000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714089.325156, 166.017000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714094.330331, 168.382000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714094.330627, 168.382000]: Robot tiago1, [Result] State: 3
+[INFO] [1587714094.330787, 168.382000]: tiago1 has navigated to l_t00.
+[INFO] [1587714099.335777, 170.712000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714099.336039, 170.712000]: Robot tiago1, [Result] State: 3
+[INFO] [1587714099.336175, 170.712000]: tiago1 has navigated to l_t00.
+[INFO] [1587714104.341350, 173.000000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714104.341607, 173.000000]: Robot tiago1, [Result] State: 3
+[INFO] [1587714104.341758, 173.000000]: tiago1 has navigated to l_t00.
+[INFO] [1587714109.346959, 175.382000]: Robot tiago2, [Result] State: 3
+[INFO] [1587714109.347296, 175.382000]: tiago2 has navigated to l_t01.
+[INFO] [1587714109.347533, 175.382000]: Robot tiago1, [Result] State: 3
+[INFO] [1587714109.347892, 175.383000]: tiago1 has navigated to l_t00.
+[INFO] [1587714109.348116, 175.383000]: update ros simulated world state
+[INFO] [1587714109.348247, 175.383000]: updating problem...
+init success -->> tiago1
+[INFO] [1587714109.516205, 175.446000]: tiago1 navigates to task1 path_length is too small, set to default length 10.0.
+[INFO] [1587714109.516424, 175.446000]: tiago1 navigates to task1 is 10.0
+[INFO] [1587714109.545157, 175.449000]: tiago1 navigates to task2 path_length is too small, set to default length 10.0.
+[INFO] [1587714109.545367, 175.449000]: tiago1 navigates to task2 is 10.0
+[INFO] [1587714109.578470, 175.461000]: tiago1 navigates to task3 is 7.63546661919
+[INFO] [1587714109.620347, 175.474000]: tiago1 navigates to task4 is 8.97772597916
+[INFO] [1587714109.654160, 175.490000]: tiago1 navigates to task5 is 8.4955320463
+[INFO] [1587714109.689097, 175.508000]: tiago1 navigates to task6 is 9.62042899657
+[INFO] [1587714109.726416, 175.524000]: tiago1 navigates to task7 is 9.6167144693
+init success -->> tiago2
+[INFO] [1587714110.006859, 175.645000]: tiago2 navigates to task1 path_length is too small, set to default length 10.0.
+[INFO] [1587714110.007154, 175.645000]: tiago2 navigates to task1 is 10.0
+[INFO] [1587714110.039043, 175.658000]: tiago2 navigates to task2 path_length is too small, set to default length 10.0.
+[INFO] [1587714110.043393, 175.658000]: tiago2 navigates to task2 is 10.0
+[INFO] [1587714110.083341, 175.674000]: tiago2 navigates to task3 is 7.72510686336
+[INFO] [1587714110.117180, 175.686000]: tiago2 navigates to task4 is 8.92883717077
+[INFO] [1587714110.161598, 175.705000]: tiago2 navigates to task5 is 8.60754119626
+[INFO] [1587714110.196871, 175.722000]: tiago2 navigates to task6 is 9.62796121278
+[INFO] [1587714110.233430, 175.734000]: tiago2 navigates to task7 is 9.70038783269
+[INFO] [1587714110.343041, 175.777000]: update locations: ['l_t00', 'l_t01', 'l_t02', 'l_t03', 'l_t04', 'l_t05', 'l_t06']
+[INFO] [1587714110.364298, 175.785000]: dump to json file successfully!
+[INFO] [1587714110.364539, 175.785000]: updating probem done.
+[INFO] [1587714134.921025, 183.338000]: plan has successfully generated!
+[INFO] [1587714134.925083, 183.338000]: gen_robot_move_base_client_dict done!
+[INFO] [1587714134.926253, 183.338000]: do_task_dispatch: {'tiago2': 'a00_pick', 'tiago1': 'a00_pick'}
+[INFO] [1587714134.971325, 183.352000]: robot is at task2
+[INFO] [1587714134.972385, 183.352000]: tiago2 uses a00_pick executing do action
+[INFO] [1587714137.975640, 184.767000]: executed success!
+[INFO] [1587714137.975917, 184.767000]: task2 has been completed!
+[INFO] [1587714137.976127, 184.767000]: update_uncompleted_tasks: removing task2.
+[INFO] [1587714137.976331, 184.767000]: update_uncompleted_tasks: ['task1', 'task3', 'task4', 'task5', 'task6', 'task7']
+[INFO] [1587714137.976498, 184.767000]: problem has been updated!
+[INFO] [1587714137.993619, 184.774000]: robot is at task1
+[INFO] [1587714137.995188, 184.774000]: tiago1 uses a00_pick executing do action
+[INFO] [1587714140.998698, 186.200000]: executed success!
+[INFO] [1587714140.999139, 186.200000]: task1 has been completed!
+[INFO] [1587714140.999382, 186.200000]: update_uncompleted_tasks: removing task1.
+[INFO] [1587714140.999513, 186.200000]: update_uncompleted_tasks: ['task3', 'task4', 'task5', 'task6', 'task7']
+[INFO] [1587714140.999685, 186.200000]: problem has been updated!
+[INFO] [1587714140.999795, 186.200000]: update ros simulated world state
+[INFO] [1587714140.999904, 186.200000]: updating problem...
+init success -->> tiago1
+[INFO] [1587714141.162394, 186.264000]: tiago1 navigates to task3 is 7.63545681254
+[INFO] [1587714141.199890, 186.283000]: tiago1 navigates to task4 is 8.97770506683
+[INFO] [1587714141.247400, 186.302000]: tiago1 navigates to task5 is 8.5140630755
+[INFO] [1587714141.287339, 186.318000]: tiago1 navigates to task6 is 9.62007089092
+[INFO] [1587714141.320960, 186.332000]: tiago1 navigates to task7 is 9.6174718221
+init success -->> tiago2
+[INFO] [1587714141.605656, 186.458000]: tiago2 navigates to task3 is 7.72516595577
+[INFO] [1587714141.649566, 186.474000]: tiago2 navigates to task4 is 8.92890522633
+[INFO] [1587714141.685847, 186.485000]: tiago2 navigates to task5 is 8.60760655245
+[INFO] [1587714141.740434, 186.500000]: tiago2 navigates to task6 is 9.62803008265
+[INFO] [1587714141.776600, 186.521000]: tiago2 navigates to task7 is 9.70045939626
+[INFO] [1587714141.887343, 186.566000]: update locations: ['l_t00', 'l_t01', 'l_t02', 'l_t03', 'l_t04', 'l_t05', 'l_t06']
+[INFO] [1587714141.900775, 186.569000]: dump to json file successfully!
+[INFO] [1587714141.901041, 186.569000]: updating probem done.
+[INFO] [1587714166.471213, 194.315000]: plan has successfully generated!
+[INFO] [1587714166.481258, 194.317000]: gen_robot_move_base_client_dict done!
+[INFO] [1587714166.481554, 194.317000]: goto_task_dispatch: {'tiago2': 'l_t03', 'tiago1': 'l_t02'}
+[INFO] [1587714166.488098, 194.323000]: tiago2 is movting to l_t03 (task4).
+[INFO] [1587714166.496832, 194.327000]: tiago1 is movting to l_t02 (task3).
+[INFO] [1587714166.497281, 194.327000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714166.497492, 194.327000]: Robot tiago1, [Result] State: 0
+[INFO] [1587714171.502271, 196.629000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714171.502603, 196.629000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714176.508299, 198.911000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714176.508677, 198.911000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714181.513857, 201.190000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714181.514202, 201.190000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714186.519449, 203.499000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714186.519858, 203.499000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714191.525152, 205.715000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714191.525537, 205.715000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714196.529106, 208.001000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714196.529358, 208.001000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714201.532073, 210.291000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714201.532312, 210.291000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714206.537121, 212.553000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714206.537379, 212.553000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714211.542777, 214.800000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714211.543045, 214.800000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714216.548391, 217.038000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714216.548679, 217.038000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714221.551695, 219.342000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714221.552079, 219.342000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714226.557333, 221.556000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714226.557610, 221.556000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714231.566006, 223.800000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714231.566291, 223.800000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714236.570479, 226.095000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714236.570716, 226.095000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714241.575691, 228.355000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714241.575959, 228.355000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714246.581134, 230.624000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714246.581632, 230.625000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714251.586612, 232.849000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714251.586886, 232.849000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714256.592019, 235.103000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714256.592328, 235.103000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714261.596865, 237.364000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714261.597089, 237.364000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714266.602257, 239.624000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714266.602544, 239.624000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714271.607720, 241.912000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714271.608001, 241.912000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714276.613222, 244.168000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714276.613515, 244.168000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714281.618732, 246.386000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714281.619141, 246.386000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714286.624348, 248.595000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714286.624660, 248.595000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714291.629482, 250.776000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714291.629718, 250.776000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714296.633021, 252.992000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714296.633278, 252.992000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714301.638380, 255.189000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714301.638616, 255.189000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714306.643956, 257.415000]: Robot tiago2, [Result] State: 3
+[INFO] [1587714306.644209, 257.415000]: tiago2 has navigated to l_t03.
+[INFO] [1587714306.644348, 257.415000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714311.647671, 259.702000]: Robot tiago2, [Result] State: 3
+[INFO] [1587714311.647935, 259.702000]: tiago2 has navigated to l_t03.
+[INFO] [1587714311.648073, 259.702000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714316.651723, 261.923000]: Robot tiago2, [Result] State: 3
+[INFO] [1587714316.651982, 261.923000]: tiago2 has navigated to l_t03.
+[INFO] [1587714316.652129, 261.923000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714321.655725, 264.104000]: Robot tiago2, [Result] State: 3
+[INFO] [1587714321.656009, 264.104000]: tiago2 has navigated to l_t03.
+[INFO] [1587714321.656163, 264.104000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714326.660696, 266.360000]: Robot tiago2, [Result] State: 3
+[INFO] [1587714326.661011, 266.360000]: tiago2 has navigated to l_t03.
+[INFO] [1587714326.661177, 266.360000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714331.663665, 268.629000]: Robot tiago2, [Result] State: 3
+[INFO] [1587714331.663925, 268.629000]: tiago2 has navigated to l_t03.
+[INFO] [1587714331.664077, 268.629000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714336.669256, 270.942000]: Robot tiago2, [Result] State: 3
+[INFO] [1587714336.669491, 270.942000]: tiago2 has navigated to l_t03.
+[INFO] [1587714336.669628, 270.942000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714341.674812, 273.245000]: Robot tiago2, [Result] State: 3
+[INFO] [1587714341.675066, 273.245000]: tiago2 has navigated to l_t03.
+[INFO] [1587714341.675367, 273.246000]: Robot tiago1, [Result] State: 3
+[INFO] [1587714341.675517, 273.246000]: tiago1 has navigated to l_t02.
+[INFO] [1587714341.675750, 273.246000]: update ros simulated world state
+[INFO] [1587714341.675878, 273.246000]: updating problem...
+init success -->> tiago1
+[INFO] [1587714341.888179, 273.322000]: tiago1 navigates to task3 path_length is too small, set to default length 10.0.
+[INFO] [1587714341.888692, 273.322000]: tiago1 navigates to task3 is 10.0
+[INFO] [1587714341.920102, 273.333000]: tiago1 navigates to task4 path_length is too small, set to default length 10.0.
+[INFO] [1587714341.920312, 273.333000]: tiago1 navigates to task4 is 10.0
+[INFO] [1587714341.956335, 273.344000]: tiago1 navigates to task5 is 0.942946454817
+[INFO] [1587714341.986479, 273.361000]: tiago1 navigates to task6 is 3.60062922924
+[INFO] [1587714342.017045, 273.379000]: tiago1 navigates to task7 is 2.04695322977
+init success -->> tiago2
+[INFO] [1587714342.260668, 273.477000]: tiago2 navigates to task3 path_length is too small, set to default length 10.0.
+[INFO] [1587714342.260945, 273.477000]: tiago2 navigates to task3 is 10.0
+[INFO] [1587714342.295044, 273.491000]: tiago2 navigates to task4 path_length is too small, set to default length 10.0.
+[INFO] [1587714342.295288, 273.491000]: tiago2 navigates to task4 is 10.0
+[INFO] [1587714342.325114, 273.499000]: tiago2 navigates to task5 is 3.56740866536
+[INFO] [1587714342.357667, 273.507000]: tiago2 navigates to task6 is 1.07109102923
+[INFO] [1587714342.408058, 273.521000]: tiago2 navigates to task7 is 2.848996974
+[INFO] [1587714342.501981, 273.560000]: update locations: ['l_t02', 'l_t03', 'l_t04', 'l_t05', 'l_t06']
+[INFO] [1587714342.514469, 273.565000]: dump to json file successfully!
+[INFO] [1587714342.514701, 273.565000]: updating probem done.
+[INFO] [1587714367.057542, 281.322000]: plan has successfully generated!
+[INFO] [1587714367.062264, 281.325000]: gen_robot_move_base_client_dict done!
+[INFO] [1587714367.062616, 281.325000]: do_task_dispatch: {'tiago2': 'a01_drop', 'tiago1': 'a01_drop'}
+[INFO] [1587714367.089884, 281.336000]: robot is at task4
+[INFO] [1587714367.090968, 281.336000]: tiago2 uses a01_drop executing do action
+[INFO] [1587714367.159864, 281.355000]: SpawnModel: Successfully spawned entity coke_can_slim
+[INFO] [1587714367.160155, 281.355000]: %s completed! add new ojbects to gazebo!
+[INFO] [1587714370.163231, 282.712000]: executed success!
+[INFO] [1587714370.163496, 282.712000]: task4 has been completed!
+[INFO] [1587714370.163653, 282.712000]: update_uncompleted_tasks: removing task4.
+[INFO] [1587714370.163781, 282.712000]: update_uncompleted_tasks: ['task3', 'task5', 'task6', 'task7']
+[INFO] [1587714370.163914, 282.712000]: problem has been updated!
+[INFO] [1587714370.208543, 282.723000]: robot is at task3
+[INFO] [1587714370.210265, 282.724000]: tiago1 uses a01_drop executing do action
+[INFO] [1587714370.399698, 282.818000]: SpawnModel: Successfully spawned entity bifrutas_tropical_can
+[INFO] [1587714370.399983, 282.818000]: %s completed! add new ojbects to gazebo!
+[INFO] [1587714373.403200, 284.130000]: executed success!
+[INFO] [1587714373.404010, 284.131000]: task3 has been completed!
+[INFO] [1587714373.404229, 284.131000]: update_uncompleted_tasks: removing task3.
+[INFO] [1587714373.404449, 284.131000]: update_uncompleted_tasks: ['task5', 'task6', 'task7']
+[INFO] [1587714373.405451, 284.131000]: problem has been updated!
+[INFO] [1587714373.405680, 284.131000]: update ros simulated world state
+[INFO] [1587714373.405988, 284.132000]: updating problem...
+init success -->> tiago1
+[INFO] [1587714373.578555, 284.203000]: tiago1 navigates to task5 is 0.943385905473
+[INFO] [1587714373.607422, 284.214000]: tiago1 navigates to task6 is 3.60096402784
+[INFO] [1587714373.636627, 284.221000]: tiago1 navigates to task7 is 2.04731214878
+init success -->> tiago2
+[INFO] [1587714373.910837, 284.325000]: tiago2 navigates to task5 is 3.56789762329
+[INFO] [1587714373.959046, 284.334000]: tiago2 navigates to task6 is 1.07036154898
+[INFO] [1587714373.989759, 284.345000]: tiago2 navigates to task7 is 2.84948310935
+[INFO] [1587714374.068517, 284.384000]: update locations: ['l_t02', 'l_t03', 'l_t04', 'l_t05', 'l_t06']
+[INFO] [1587714374.074629, 284.386000]: dump to json file successfully!
+[INFO] [1587714374.074913, 284.386000]: updating probem done.
+[INFO] [1587714398.577751, 292.201000]: plan has successfully generated!
+[INFO] [1587714398.582755, 292.203000]: gen_robot_move_base_client_dict done!
+[INFO] [1587714398.583710, 292.203000]: goto_task_dispatch: {'tiago2': 'l_t05', 'tiago1': 'l_t04'}
+[INFO] [1587714398.596657, 292.205000]: tiago2 is movting to l_t05 (task6).
+[INFO] [1587714398.604355, 292.205000]: tiago1 is movting to l_t04 (task5).
+[INFO] [1587714398.604804, 292.205000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714398.604999, 292.205000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714403.609218, 294.478000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714403.609513, 294.478000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714408.614716, 296.720000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714408.615179, 296.720000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714413.620359, 299.004000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714413.620670, 299.004000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714418.625815, 301.252000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714418.626263, 301.253000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714423.630473, 303.533000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714423.630730, 303.533000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714428.635823, 305.738000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714428.636064, 305.738000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714433.641205, 307.969000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714433.641498, 307.969000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714438.646807, 310.200000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714438.647436, 310.202000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714443.652660, 312.457000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714443.652994, 312.457000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714448.658062, 314.780000]: Robot tiago2, [Result] State: 1
+[INFO] [1587714448.658318, 314.780000]: Robot tiago1, [Result] State: 3
+[INFO] [1587714448.658478, 314.780000]: tiago1 has navigated to l_t04.
+[INFO] [1587714453.663704, 317.220000]: Robot tiago2, [Result] State: 3
+[INFO] [1587714453.664285, 317.220000]: tiago2 has navigated to l_t05.
+[INFO] [1587714453.664461, 317.220000]: Robot tiago1, [Result] State: 3
+[INFO] [1587714453.664589, 317.220000]: tiago1 has navigated to l_t04.
+[INFO] [1587714453.664773, 317.220000]: update ros simulated world state
+[INFO] [1587714453.664902, 317.220000]: updating problem...
+init success -->> tiago1
+[INFO] [1587714453.822314, 317.280000]: tiago1 navigates to task5 path_length is too small, set to default length 10.0.
+[INFO] [1587714453.822544, 317.280000]: tiago1 navigates to task5 is 10.0
+[INFO] [1587714453.853661, 317.298000]: tiago1 navigates to task6 path_length is too small, set to default length 10.0.
+[INFO] [1587714453.854268, 317.299000]: tiago1 navigates to task6 is 10.0
+[INFO] [1587714453.888556, 317.319000]: tiago1 navigates to task7 is 1.0715385035
+init success -->> tiago2
+[INFO] [1587714454.116971, 317.420000]: tiago2 navigates to task5 path_length is too small, set to default length 10.0.
+[INFO] [1587714454.117293, 317.420000]: tiago2 navigates to task5 is 10.0
+[INFO] [1587714454.156218, 317.435000]: tiago2 navigates to task6 path_length is too small, set to default length 10.0.
+[INFO] [1587714454.156581, 317.435000]: tiago2 navigates to task6 is 10.0
+[INFO] [1587714454.193984, 317.449000]: tiago2 navigates to task7 is 1.8340981054
+[INFO] [1587714454.256209, 317.474000]: update locations: ['l_t04', 'l_t05', 'l_t06']
+[INFO] [1587714454.268449, 317.478000]: dump to json file successfully!
+[INFO] [1587714454.268688, 317.478000]: updating probem done.
+[INFO] [1587714478.801728, 325.583000]: plan has successfully generated!
+[INFO] [1587714478.805278, 325.583000]: gen_robot_move_base_client_dict done!
+[INFO] [1587714478.806338, 325.583000]: do_task_dispatch: {'tiago2': 'a02_pack', 'tiago1': 'a02_pack'}
+[INFO] [1587714478.823855, 325.598000]: robot is at task6
+[INFO] [1587714478.825178, 325.598000]: tiago2 uses a02_pack executing do action
+[WARN] [1587714606.360915, 385.603000]: Model task6_model has been deleted from gazebo.
+[INFO] [1587714607.572632, 386.158000]: SpawnModel: Successfully spawned entity coke_can_slim
+[INFO] [1587714607.573009, 386.159000]: %s completed! add new ojbects to gazebo!
+[INFO] [1587714610.576249, 387.486000]: executed success!
+[INFO] [1587714610.576494, 387.486000]: task6 has been completed!
+[INFO] [1587714610.576737, 387.486000]: update_uncompleted_tasks: removing task6.
+[INFO] [1587714610.576932, 387.486000]: update_uncompleted_tasks: ['task5', 'task7']
+[INFO] [1587714610.577417, 387.487000]: problem has been updated!
+[INFO] [1587714610.591976, 387.491000]: robot is at task5
+[INFO] [1587714610.592884, 387.491000]: tiago1 uses a02_pack executing do action
+[WARN] [1587714738.513669, 447.497000]: Model task5_model has been deleted from gazebo.
+[INFO] [1587714739.555871, 447.988000]: SpawnModel: Successfully spawned entity bifrutas_tropical_can
+[INFO] [1587714739.556128, 447.988000]: %s completed! add new ojbects to gazebo!
+[INFO] [1587714742.559320, 449.327000]: executed success!
+[INFO] [1587714742.559659, 449.327000]: task5 has been completed!
+[INFO] [1587714742.559897, 449.327000]: update_uncompleted_tasks: removing task5.
+[INFO] [1587714742.560078, 449.327000]: update_uncompleted_tasks: ['task7']
+[INFO] [1587714742.560225, 449.327000]: problem has been updated!
+[INFO] [1587714742.560358, 449.327000]: update ros simulated world state
+[INFO] [1587714742.561270, 449.327000]: updating problem...
+init success -->> tiago1
+[INFO] [1587714742.696861, 449.389000]: tiago1 navigates to task7 is 1.07734340036
+init success -->> tiago2
+[INFO] [1587714742.883355, 449.454000]: tiago2 navigates to task7 is 1.84830183823
+[INFO] [1587714742.970085, 449.494000]: update locations: ['l_t04', 'l_t05', 'l_t06']
+[INFO] [1587714742.972282, 449.495000]: dump to json file successfully!
+[INFO] [1587714742.972490, 449.495000]: updating probem done.
+[INFO] [1587714767.541527, 457.584000]: plan has successfully generated!
+[INFO] [1587714767.546132, 457.585000]: gen_robot_move_base_client_dict done!
+[INFO] [1587714767.546735, 457.585000]: goto_task_dispatch: {'tiago1': 'l_t06'}
+[INFO] [1587714767.554273, 457.587000]: tiago1 is movting to l_t06 (task7).
+[INFO] [1587714767.558271, 457.587000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714772.564065, 459.986000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714777.569734, 462.368000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714782.573680, 464.723000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714787.577249, 467.044000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714792.582590, 469.305000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714797.587703, 471.532000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714802.592949, 473.840000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714807.595685, 476.160000]: Robot tiago1, [Result] State: 1
+[INFO] [1587714812.600322, 478.475000]: Robot tiago1, [Result] State: 3
+[INFO] [1587714812.600563, 478.475000]: tiago1 has navigated to l_t06.
+[INFO] [1587714812.600748, 478.475000]: update ros simulated world state
+[INFO] [1587714812.600870, 478.475000]: updating problem...
+init success -->> tiago1
+[INFO] [1587714812.728558, 478.525000]: tiago1 navigates to task7 path_length is too small, set to default length 10.0.
+[INFO] [1587714812.729213, 478.526000]: tiago1 navigates to task7 is 10.0
+init success -->> tiago2
+[INFO] [1587714812.920768, 478.604000]: tiago2 navigates to task7 is 1.85022923115
+[INFO] [1587714812.996299, 478.634000]: update locations: ['l_t05', 'l_t06']
+[INFO] [1587714812.998143, 478.634000]: dump to json file successfully!
+[INFO] [1587714812.998337, 478.634000]: updating probem done.
+[INFO] [1587714837.547294, 486.701000]: plan has successfully generated!
+[INFO] [1587714837.551709, 486.702000]: gen_robot_move_base_client_dict done!
+[INFO] [1587714837.552192, 486.702000]: do_task_dispatch: {'tiago1': 'a02_pack'}
+[INFO] [1587714837.610572, 486.721000]: robot is at task7
+[INFO] [1587714837.612138, 486.722000]: tiago1 uses a02_pack executing do action
+[INFO] [1587714840.613640, 488.160000]: executed success!
+[INFO] [1587714840.613965, 488.161000]: task7 has been completed!
+[INFO] [1587714840.614125, 488.161000]: update_uncompleted_tasks: removing task7.
+[INFO] [1587714840.614275, 488.161000]: update_uncompleted_tasks: []
+[INFO] [1587714840.614418, 488.161000]: problem has been updated!
+[INFO] [1587714840.614549, 488.161000]: update ros simulated world state
+[INFO] [1587714840.614687, 488.161000]: all tasks has been completed!
+[INFO] [1587714840.614815, 488.161000]: Shut down!

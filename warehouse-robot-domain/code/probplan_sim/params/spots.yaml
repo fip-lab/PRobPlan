@@ -1,0 +1,216 @@
+
+robots: [{name: tiago1, available: true}, {name: tiago2, available: true}]
+abilities: [a00_pick , a01_drop, a02_pack]
+locations: [l_r00, l_r01, l_t00, l_t01, l_t02, l_t03, l_t04, l_t05, l_t06]
+task_names: [task1, task2, task3, task4, task5, task6, task7]
+
+tiago1:
+ position:
+  x: 1.4
+  y: 0.7
+  z: 0.0
+ orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  w: 1.0
+ namespace:
+  make_plan: /tiago1/move_base/make_plan
+  odom: /tiago1/ground_truth_odom
+ loaction_tag: l_r00
+
+tiago2:
+ position:
+  x: 1.4
+  y: -0.7
+  z: 0.0
+ orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  w: 1.0
+ namespace:
+  make_plan: /tiago2/move_base/make_plan
+  odom: /tiago2/ground_truth_odom
+ loaction_tag: l_r01
+
+task1:
+ position:
+  x: -0.774
+  y: -6.48
+  z: 0.0
+ orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  w: 1.0
+ description: t00_pick_obj1
+ complete: false
+ label: t00
+ utility: 100
+ loaction_tag: l_t00
+ ability: a00_pick
+ must_be_completed_before: task3
+  
+task2:
+ position:
+  x: 2.34
+  y: -6.51
+  z: 0.0
+ orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  w: 1.0
+ description: t01_pick_obj2
+ complete: false
+ label: t01
+ utility: 100
+ loaction_tag: l_t01
+ ability: a00_pick
+ must_be_completed_before: task4
+
+task3:
+ position:
+  x: -2.02
+  y: -0.965
+  z: 0.0
+ orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  w: 1.0
+ description: t02_drop_obj1
+ complete: false
+ label: t02
+ utility: 100
+ loaction_tag: l_t02 
+ ability: a01_drop
+ must_be_completed_before: task5
+
+task4:
+ position:
+  x: -1.97
+  y: 1.08
+  z: 0.0
+ orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  w: 1.0
+ description: t03_drop_obj2
+ complete: false
+ label: t03
+ utility: 100 
+ loaction_tag: l_t03 
+ ability: a01_drop
+ must_be_completed_before: task6
+
+task5:
+ position:
+  x: -2.97
+  y: -1.05
+  z: 0.0
+ orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  w: 1.0
+ description: t04_put_obj1_into_box
+ complete: false 
+ label: t04
+ utility: 100
+ loaction_tag: l_t04
+ ability: a02_pack
+ must_be_completed_before: task7
+
+task6:
+ position:
+  x: -2.99
+  y: 1.03
+  z: 0.0
+ orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  w: 1.0
+ description: t05_put_obj2_into_box
+ complete: false 
+ label: t05
+ utility: 100
+ loaction_tag: l_t05
+ ability: a02_pack
+ must_be_completed_before: task7
+
+task7:
+ position:
+  x: -3.93
+  y: -0.492
+  z: 0.0
+ orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  w: 1.0
+ description: t06_pack_all
+ complete: false 
+ label: t06
+ utility: 100
+ loaction_tag: l_t06 
+ ability: a02_pack
+ must_be_completed_before: none
+
+#  coke_can_slim bifrutas_tropical_can
+# <pose>-2.0 0.2 0.95 0 0 -0.5</pose>
+
+task3_model:
+  name: bifrutas_tropical_can
+  model_name: task5_model
+  position:
+    x: -2.1
+    y: -0.2
+    z: 1.0
+  orientation:
+   x: 0.0
+   y: 0.0
+   z: 0.0
+   w: 1.0
+
+task4_model:
+  name: coke_can_slim
+  model_name: task6_model
+  position:
+    x: -2.1
+    y: 0.3
+    z: 1.0
+  orientation:
+   x: 0.0
+   y: 0.0
+   z: 0.0
+   w: 1.0
+
+task5_model:
+  name: bifrutas_tropical_can
+  model_name: bifrutas_tropical_can_for_task_5
+  position:
+    x: -2.91
+    y: -0.2
+    z: 1.0
+  orientation:
+   x: 0.0
+   y: 0.0
+   z: 0.0
+   w: 1.0
+
+task6_model:
+  name: coke_can_slim
+  model_name: coke_can_slim_for_task_6
+  position:
+    x: -2.82
+    y: -0.2
+    z: 1.0
+  orientation:
+   x: 0.0
+   y: 0.0
+   z: 0.0
+   w: 1.0

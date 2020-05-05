@@ -1,0 +1,64 @@
+{
+  "abilities": [
+    "a00_pick", 
+    "a01_drop", 
+    "a02_pack"
+  ], 
+  "description": "planning problem description", 
+  "do_costs": [], 
+  "goto_costs": [
+    {
+      "cost": 10.0, 
+      "dest": "l_t06", 
+      "start": "l_t06"
+    }, 
+    {
+      "cost": 1.8557120631165085, 
+      "dest": "l_t06", 
+      "start": "l_t05"
+    }
+  ], 
+  "index": 1, 
+  "locations": [
+    "l_t05", 
+    "l_t06"
+  ], 
+  "orders": [], 
+  "robot_at": [
+    "l_t06", 
+    "l_t05"
+  ], 
+  "robot_current_location_dict": {
+    "tiago1": "l_t06", 
+    "tiago2": "l_t05"
+  }, 
+  "robots": [
+    "tiago1", 
+    "tiago2"
+  ], 
+  "task_location_tag_to_label_dict": {
+    "l_t00": "task1", 
+    "l_t01": "task2", 
+    "l_t02": "task3", 
+    "l_t03": "task4", 
+    "l_t04": "task5", 
+    "l_t05": "task6", 
+    "l_t06": "task7"
+  }, 
+  "task_tag_names": [
+    "task7"
+  ], 
+  "tasks": [
+    {
+      "ability": "a02_pack", 
+      "finished": false, 
+      "location": "l_t06", 
+      "tag_name": "task7", 
+      "task_name": "t06_pack_all", 
+      "utility": 100
+    }
+  ], 
+  "uncompleted_tasks": [
+    "task7"
+  ]
+}
