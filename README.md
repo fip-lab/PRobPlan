@@ -8,9 +8,9 @@ We propose a framework, called PRobPlan (PRobabilistic Robot Planning). Our fram
 
 ###  Simulated Vedio
 
-The simalation vedio link will be added very soon.
+Please refer to this link:
 
-[ROS Simalation on YouTube](https://youtu.be/mmgoIH_CILo)
+[ROS Simulation on YouTube](https://youtu.be/mmgoIH_CILo)
 
 
 ### Requirements
