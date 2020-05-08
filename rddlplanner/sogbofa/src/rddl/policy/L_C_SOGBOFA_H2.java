@@ -1635,7 +1635,8 @@ public class L_C_SOGBOFA_H2 extends Policy {
 
 		log.debug("currentRound: {}", currentRound);
 
-		// in current round, if the resulting action list is empty, return a buffered action list in bufferConformantActs
+		// in current round, if the resulting action list is empty, 
+		// return a buffered action list in bufferConformantActs
 		if(conformantActs.get(0).size() == 0 && bufferConformantActs.size()>1){
 			ArrayList<PVAR_INST_DEF> ret = new ArrayList<>();
 			for(PVAR_INST_DEF act : bufferConformantActs){
