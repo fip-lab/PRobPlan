@@ -1,0 +1,1 @@
+This folder contains a example of domain file, problem file and plan result file.

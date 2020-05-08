@@ -1,0 +1,74 @@
+instance multi_ros_robot_inst_mdp__1 {
+
+	domain = multi_ros_robot_mdp;
+
+	objects {
+		robot : {
+			tiago1,
+			tiago2 };
+		ability : {
+			a00_pick,
+			a01_drop,
+			a02_pack };
+		location : { l_t00,l_t01,l_t02,l_t03,l_t04,l_t05,l_t06,l_r01,l_r00 };
+		task : {
+			t00_pick_obj1,
+			t01_pick_obj2,
+			t02_drop_obj1,
+			t03_drop_obj2,
+			t04_put_obj1_into_box,
+			t05_put_obj2_into_box,
+			t06_pack_all };
+  };
+
+	non-fluents {
+		MOVE_PROB(tiago1) = 0.9;
+		MOVE_PROB(tiago2) = 0.9;
+		DO_PROB(tiago1) = 0.9;
+		DO_PROB(tiago2) = 0.9;
+		GOTO_COST(l_r00, l_t00) = 6.289414569321216;
+		GOTO_COST(l_r00, l_t01) = 5.892675155179731;
+		GOTO_COST(l_r00, l_t02) = 3.4555804503262797;
+		GOTO_COST(l_r00, l_t03) = 3.833733570602463;
+		GOTO_COST(l_r00, l_t04) = 4.420138614766841;
+		GOTO_COST(l_r00, l_t05) = 4.785726009061604;
+		GOTO_COST(l_r00, l_t06) = 5.362418973320608;
+		GOTO_COST(l_r01, l_t00) = 7.80399472336582;
+		GOTO_COST(l_r01, l_t01) = 7.385114074434454;
+		GOTO_COST(l_r01, l_t02) = 3.828538445912341;
+		GOTO_COST(l_r01, l_t03) = 3.451564970930684;
+		GOTO_COST(l_r01, l_t04) = 4.7361848438552885;
+		GOTO_COST(l_r01, l_t05) = 4.442496446118234;
+		GOTO_COST(l_r01, l_t06) = 5.501557671355636;
+		TASK(t00_pick_obj1, a00_pick, l_t00);
+		TASK(t01_pick_obj2, a00_pick, l_t01);
+		TASK(t02_drop_obj1, a01_drop, l_t02);
+		TASK(t03_drop_obj2, a01_drop, l_t03);
+		TASK(t04_put_obj1_into_box, a02_pack, l_t04);
+		TASK(t05_put_obj2_into_box, a02_pack, l_t05);
+		TASK(t06_pack_all, a02_pack, l_t06);
+		TASK_UTILITY(t00_pick_obj1) = 100;
+		TASK_UTILITY(t01_pick_obj2) = 100;
+		TASK_UTILITY(t02_drop_obj1) = 100;
+		TASK_UTILITY(t03_drop_obj2) = 100;
+		TASK_UTILITY(t04_put_obj1_into_box) = 100;
+		TASK_UTILITY(t05_put_obj2_into_box) = 100;
+		TASK_UTILITY(t06_pack_all) = 100;
+	};
+
+	init-state {
+		robot-at(tiago1, l_r00);
+		robot-at(tiago2, l_r01);
+		pre-task-finished(t00_pick_obj1, t02_drop_obj1) = false;
+		pre-task-finished(t01_pick_obj2, t03_drop_obj2) = false;
+		pre-task-finished(t02_drop_obj1, t04_put_obj1_into_box) = false;
+		pre-task-finished(t03_drop_obj2, t05_put_obj2_into_box) = false;
+		pre-task-finished(t04_put_obj1_into_box, t06_pack_all) = false;
+		pre-task-finished(t05_put_obj2_into_box, t06_pack_all) = false;
+	};
+
+	horizon = 10;
+
+	discount = 0.8;
+
+}
