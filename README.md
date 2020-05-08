@@ -6,11 +6,11 @@ We propose a framework, called PRobPlan (PRobabilistic Robot Planning). Our fram
 
 ## ROS simulated warehouse domain 
 
-###  Simulated Vedio
+###  Simulated video
 
 Please refer to this link:
 
-[ROS Simulation Vedio on YouTube](https://youtu.be/EUkA_HW_2MMo)
+[ROS Simulation Video on YouTube](https://youtu.be/EUkA_HW_2MMo)
 
 
 ### Requirements
