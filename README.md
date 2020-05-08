@@ -6,18 +6,24 @@ We propose a framework, called PRobPlan (PRobabilistic Robot Planning). Our fram
 
 ## ROS simulated warehouse domain 
 
+###  Simulated Vedio
+
+The simalation vedio link will be added very soon.
+
+[ROS Simalation on YouTube](https://youtu.be/mmgoIH_CILo)
+
 
 ### Requirements
 
 - Run Planner: Java SE 8 or higher
 - ROS simulation: Ubuntu 16.04, ROS Kinetic and Gazebo 7.
 
+
 ### Command
 
 - launch simulation: `gazebo` and `rviz`
 
 `roslaunch probplan_sim probplan_gazebo_sim.launch`
-
 
 
 - launch PRobPlan
@@ -27,10 +33,6 @@ We propose a framework, called PRobPlan (PRobabilistic Robot Planning). Our fram
 ### Results
 
 ![task](./warehouse-robot-domain/pics/mult_2x2_sim_task.png)
-
-### Vedio
-
-The simualtion vedio link will be added very soon.
 
 
 
