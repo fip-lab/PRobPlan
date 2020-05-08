@@ -43,7 +43,7 @@ public class RDDL {
 	static HashMap<Object, HashMap<Object, TreeExp>> ExpHash = new HashMap<Object, HashMap<Object, TreeExp>>();
 	static HashMap<Object, HashMap<Object, TreeExp>> ThresholdHash = new HashMap<Object, HashMap<Object, TreeExp>>();
 	
-	public static int a = 0;
+
 
 	public RDDL() { }
 
@@ -3099,13 +3099,16 @@ public class RDDL {
 		// Note: Dirichlet produces a vector
 		public Object sample(HashMap<LVAR,LCONST> subs, State s, RandomDataGenerator r) throws EvalException {
 			double prob = ((Number)_exprProb.sample(subs, s, r)).doubleValue();
-			if(prob > 1.0 && prob - 1.0 < 0.0001) {
+			if(prob > 1.0) {
 				prob = 1.0;
 			}
 			else {
-				if (prob < 0.0d || prob > 1.0d)
-					throw new EvalException("RDDL: Bernoulli prob " + prob + " not in [0,1]\n" + _exprProb);
+				if(prob < 0.0d) {
+					prob = 0.0;
+				}
 			}
+			if (prob < 0.0d || prob > 1.0d)
+				throw new EvalException("RDDL: Bernoulli prob " + prob + " not in [0,1]\n" + _exprProb);
 			return r.nextUniform(0d,1d) < prob; // Bernoulli parameter is prob of being true
 		}
 		
@@ -3129,6 +3132,29 @@ public class RDDL {
 			if (!(prob instanceof TreeExp || prob instanceof Double)) {
 				throw new EvalException("Bernouli has to have a expression! RDDL: Bernoulli");
 			}
+			double probVal = 0.0;
+			if(prob instanceof Double) {
+				probVal = (Double)prob;
+				if(probVal > 1.0) {
+					probVal = 1.0;
+				}
+				if(probVal < 0) {
+					probVal = 0.0;
+				}
+				prob = probVal;
+			}
+			if(prob instanceof TreeExp && ((TreeExp)prob).IsNumber()) {
+				probVal = ((TreeExp)prob).ToNumber();
+				if(probVal > 1.0) {
+					probVal = 1.0;
+				}
+				if(probVal < 0) {
+					probVal = 0.0;
+				}
+				((TreeExp)prob).term.coefficient = probVal;
+			}
+
+			
 			return prob;
 		}
 		
@@ -3446,7 +3472,7 @@ public class RDDL {
 		public Object sample(HashMap<LVAR,LCONST> subs, State s, RandomDataGenerator r) throws EvalException {
 
 			// First check for early termination in case of TIMES and 0 -- needed to facilitate collectGfluents 
-						if (_op == OPER_EXPR.TIMES) {
+						if (_op.equals(OPER_EXPR.TIMES)) {
 							
 							Object o1 = null;
 							try { // FIXME: using Exceptions here for standard control-flow, should allow sample to return null
@@ -3522,33 +3548,20 @@ public class RDDL {
 		public Object sample(HashMap<LVAR,LCONST> subs, TEState s, RandomDataGenerator r) throws EvalException {
 			
 			// First check for early termination in case of TIMES and 0 -- needed to facilitate collectGfluents 
+			TreeExp o1 = s.toTExp(_e1.sample(subs, s, r), null);
+			TreeExp o2 = s.toTExp(_e2.sample(subs, s, r), null);
 			if (_op.equals(OPER_EXPR.TIMES)) {
-				
-				TreeExp o1 = null;
-				try { // FIXME: using Exceptions here for standard control-flow, should allow sample to return null
-					o1 = s.toTExp(_e1.sample(subs, s, r), null);
-				} catch (Exception e) { /* ignore here */ }
+
 				if (o1 != null && (o1.term != null && o1.term.var == -1 && o1.term.coefficient == 0.0)) 
 					return o1;
-				
-				TreeExp o2 = null;
-				try { // FIXME: using Exceptions here for standard control-flow, should allow sample to return null
-					o2 = s.toTExp(_e2.sample(subs, s, r), null);
-				} catch (Exception e) { /* ignore here */ }
+
 				if (o2 != null && (o2.term != null && o2.term.var == -1 && o2.term.coefficient == 0.0)) 
 					return o2;
 			}
 			
-			try {
-				TreeExp o1 = TEState.toTExp(_e1.sample(subs, s, r), null);
-				if(_op.equals(OPER_EXPR.TIMES) && (o1.term != null && o1.term.var == -1 && o1.term.coefficient == 0.0)){
-					return o1;
-				}
-				TreeExp o2 = TEState.toTExp(_e2.sample(subs, s, r), null);				
-				return ComputeArithmeticResult(o1, o2, _op);
-			} catch (EvalException e) {
-				throw new EvalException(e + "\n" + this);
-			}
+			
+			return ComputeArithmeticResult(o1, o2, _op);
+
 		}
 		
 		public EXPR getDist(HashMap<LVAR,LCONST> subs, State s) throws EvalException {
@@ -3750,24 +3763,18 @@ public class RDDL {
 		if(o1 instanceof TreeExp && o2 instanceof TreeExp){
 			
 			if (op.equals( OPER_EXPR.PLUS)){
-				TreeExp newTExp = (TreeExp)o1;
-				TreeExp newTExp2 = (TreeExp)o2;
-				res = newTExp.ADD(newTExp2);
+				res = ((TreeExp)o1).ADD((TreeExp)o2);
 			}
 			else if (op.equals(OPER_EXPR.MINUS)){
-				TreeExp newTExp = (TreeExp)o1;
-				TreeExp newTExp2 = (TreeExp)o2;
-				res = newTExp.MINUS(newTExp2);
+
+				res = ((TreeExp)o1).MINUS((TreeExp)o2);
 			}
 			else if (op.equals(OPER_EXPR.TIMES)){
-				TreeExp newTExp = (TreeExp)o1;
-				TreeExp newTExp2 = (TreeExp)o2;
-				res = newTExp.TIMES(newTExp2);
+
+				res = ((TreeExp)o1).TIMES((TreeExp)o2);
 			}
 			else{
-				TreeExp newTExp = (TreeExp)o1;
-				TreeExp newTExp2 = (TreeExp)o2;
-				res = newTExp.DIVID(newTExp2);
+				res = ((TreeExp)o1).DIVID((TreeExp)o2);
 			}
 		}
 		
@@ -3775,29 +3782,28 @@ public class RDDL {
 			if((o1 instanceof Double || o1 instanceof Integer || o1 instanceof Long || o1 instanceof Boolean) && 
 					(o2 instanceof Double || o2 instanceof Integer || o2 instanceof Long || o2 instanceof Boolean)){
 				if (op.equals( OPER_EXPR.PLUS))
-					return EState.getDouble(o1) + EState.getDouble(o2);
+					return TEState.getDouble(o1) + TEState.getDouble(o2);
 				else if (op.equals(OPER_EXPR.MINUS))
-					return EState.getDouble(o1) - EState.getDouble(o2);
+					return TEState.getDouble(o1) - TEState.getDouble(o2);
 				else if (op.equals(OPER_EXPR.TIMES))
-					return EState.getDouble(o1) * EState.getDouble(o2);
+					return TEState.getDouble(o1) * TEState.getDouble(o2);
 				else
-					return EState.getDouble(o1) / EState.getDouble(o2);
+					return TEState.getDouble(o1) / TEState.getDouble(o2);
 			}
 			else{
 				if((o1 instanceof Double || o1 instanceof Integer || o1 instanceof Long) && o2 instanceof TreeExp){
-					TreeExp newTExp2 = (TreeExp)o2;
-					TreeExp newTExp = TreeExp.BuildNewTreeExp(getDouble(o1), null);
+
 					if (op.equals( OPER_EXPR.PLUS)){
-						res = newTExp.ADD(newTExp2);
+						res = (TreeExp.BuildNewTreeExp(getDouble(o1), null)).ADD((TreeExp)o2);
 					}
 					else if (op.equals(OPER_EXPR.MINUS)){
-						res = newTExp.MINUS(newTExp2);
+						res = (TreeExp.BuildNewTreeExp(getDouble(o1), null)).MINUS((TreeExp)o2);
 					}
 					else if (op.equals(OPER_EXPR.TIMES)){
-						res = newTExp.TIMES(newTExp2);
+						res = (TreeExp.BuildNewTreeExp(getDouble(o1), null)).TIMES((TreeExp)o2);
 					}
 					else if (op.equals(OPER_EXPR.DIV)){
-						res = newTExp.DIVID(newTExp2);
+						res = (TreeExp.BuildNewTreeExp(getDouble(o1), null)).DIVID((TreeExp)o2);
 					}
 					else{
 						throw new EvalException("RDDL.OperExpr: Unrecognized operation: " + op); 
@@ -3805,19 +3811,17 @@ public class RDDL {
 				}
 				else{
 					if((o2 instanceof Double || o2 instanceof Integer || o2 instanceof Long) && o1 instanceof TreeExp){
-						TreeExp newTExp = (TreeExp)o1;
-						TreeExp newTExp2 = TreeExp.BuildNewTreeExp(getDouble(o2), null);
 						if (op.equals( OPER_EXPR.PLUS)){
-							res = newTExp.ADD(newTExp2);
+							res = ((TreeExp)o1).ADD(TreeExp.BuildNewTreeExp(getDouble(o2), null));
 						}
 						else if (op.equals(OPER_EXPR.MINUS)){
-							res = newTExp.MINUS(newTExp2);
+							res = ((TreeExp)o1).MINUS(TreeExp.BuildNewTreeExp(getDouble(o2), null));
 						}
 						else if (op.equals(OPER_EXPR.TIMES)){
-							res = newTExp.TIMES(newTExp2);
+							res = ((TreeExp)o1).TIMES(TreeExp.BuildNewTreeExp(getDouble(o2), null));
 						}
 						else if (op.equals(OPER_EXPR.DIV)){
-							res = newTExp.DIVID(newTExp2);
+							res = ((TreeExp)o1).DIVID(TreeExp.BuildNewTreeExp(getDouble(o2), null));
 						}
 						else{
 							throw new EvalException("RDDL.OperExpr: Unrecognized operation: " + op); 
@@ -3854,7 +3858,7 @@ public class RDDL {
 		
 		
 		//long startRec = System.currentTimeMillis();
-		if(new Global().ifRecordLift){
+		if(Global.ifRecordLift){
 			if(op.equals(OPER_EXPR.PLUS)){
 				if(!PlusHash.containsKey(o1)){
 					PlusHash.put(o1, new HashMap<Object, TreeExp>());
@@ -3882,8 +3886,7 @@ public class RDDL {
 				DividHash.get(o1).put(o2, res);
 			}
 		}
-		
-		a ++;
+
 		return res;
 	}
 	
@@ -5082,7 +5085,7 @@ public class RDDL {
 			Object o2 = _alArgEval.size() < 2 ? null : _alArgEval.get(1);
 			
 			// DIV, MOD: Integer functions -- two args
-			if (_sName == DIV || _sName == MOD) {
+			if (_sName.equals(DIV) || _sName.equals(MOD)) {
 				if (_alArgEval.size() != 2 || !(o1 instanceof Integer) || !(o2 instanceof Integer))
 					throw new EvalException("Two operands of " + _sName + " must be integer, does not hold for: " + _alArgEval);
 				if (_sName == DIV) 
@@ -5092,61 +5095,61 @@ public class RDDL {
 			}
 
 			// MAX, MIN: Potentially integer functions -- two args
-			if (_sName == MAX || _sName == MIN) {
+			if (_sName.equals(MAX) || _sName.equals(MIN)) {
 				if (_alArgEval.size() != 2)
 					throw new EvalException("Operands of " + _sName + " takes two arguments, but " + _alArgEval + " provided.");
 
 				if (o1 instanceof Integer && o2 instanceof Integer) {
-					if (_sName == MAX) 
+					if (_sName.equals(MAX)) 
 						return Math.max((Integer)o1,(Integer)o2);
 					else // MIN
 						return Math.min((Integer)o1,(Integer)o2);
 				}
 				
-				if (_sName == MAX) 
+				if (_sName.equals(MAX)) 
 					return Math.max(((Number)o1).doubleValue(), ((Number)o2).doubleValue());
 				else // MIN
 					return Math.min(((Number)o1).doubleValue(), ((Number)o2).doubleValue());
 			}
 
 			// ABS, SGN: Potentially integer functions -- single arg
-			if (_sName == ABS || _sName == SGN) {
+			if (_sName.equals(ABS) || _sName.equals(SGN)) {
 				if (_alArgEval.size() != 1)
 					throw new EvalException("Operands of " + _sName + " take one argument, but " + _alArgEval + " provided.");
 
 				if (o1 instanceof Integer) {
 					Integer i1 = (Integer)o1;
-					if (_sName == ABS) 
+					if (_sName.equals(ABS)) 
 						return Math.abs(i1);
 					else // SGN
 						return (i1 > 0 ? 1 : (i1 < 0 ? -1 : 0));
 				}
 				
-				if (_sName == ABS) 
+				if (_sName.equals(ABS)) 
 					return Math.abs(((Number)o1).doubleValue());
 				else // SGN
 					return Math.signum(((Number)o1).doubleValue());
 			}
 
 			// ROUND, FLOOR, CEIL: Integer output, floating point input
-			if (_sName == ROUND || _sName == FLOOR || _sName == CEIL) {
+			if (_sName.equals(ROUND) || _sName.equals(FLOOR) || _sName.equals(CEIL)) {
 				if (_alArgEval.size() != 1)
 					throw new EvalException("Operands of " + _sName + " take one argument, but " + _alArgEval + " provided.");
 
-				if (_sName == ROUND) 
+				if (_sName.equals(ROUND)) 
 					return (int)Math.round(((Number)o1).doubleValue());
-				else if (_sName == FLOOR)
+				else if (_sName.equals(FLOOR))
 					return (int)Math.floor(((Number)o1).doubleValue());
 				else // SGN
 					return (int)Math.ceil(((Number)o1).doubleValue());
 			}
 
 			// POW(a,b), LOG(a,b): Real-valued functions of base b -- two args
-			if (_sName == POW || _sName == LOG) {
+			if (_sName.equals(POW) || _sName.equals(LOG)) {
 				if (_alArgEval.size() != 2)
 					throw new EvalException("Operands of " + _sName + " takes two arguments, but " + _alArgEval + " provided.");
 
-				if (_sName == POW) 
+				if (_sName.equals(POW)) 
 					return Math.pow(((Number)o1).doubleValue(), ((Number)o2).doubleValue());
 				else // LOG(a,b) = ln(a) / ln(b)
 					return Math.log(((Number)o1).doubleValue()) / Math.log(((Number)o2).doubleValue());
@@ -5157,13 +5160,13 @@ public class RDDL {
 			if (_alArgEval.size() != 1)
 				throw new EvalException("Operands of " + _sName + " take one argument, but " + _alArgEval + " provided.");
 
-			if (_sName == COS)
+			if (_sName.equals(COS))
 				return Math.cos(((Number)o1).doubleValue());
-			else if (_sName == SIN)
+			else if (_sName.equals(SIN))
 				return Math.sin(((Number)o1).doubleValue());
-			else if (_sName == TAN)
+			else if (_sName.equals(TAN))
 				return Math.tan(((Number)o1).doubleValue());
-			else if (_sName == ACOS)
+			else if (_sName.equals(ACOS))
 				return Math.acos(((Number)o1).doubleValue());
 			else if (_sName == ASIN)
 				return Math.asin(((Number)o1).doubleValue());
@@ -5293,11 +5296,8 @@ public class RDDL {
 			if(!(test instanceof TreeExp)){
 				test = TreeExp.BuildNewTreeExp(TEState.getDouble(test), null);
 			}
-			Object truebranch = _trueBranch.sample(subs, s, r);
-			Object trueResult = ComputeArithmeticResult(test, truebranch, "*");
-			Object falsebranch = _falseBranch.sample(subs, s, r);
-			Object falseResult = ComputeArithmeticResult(ComputeArithmeticResult(1, test, "-"), falsebranch, "*");
-			return ComputeArithmeticResult(trueResult, falseResult, "+");
+			return ComputeArithmeticResult(ComputeArithmeticResult(test, _trueBranch.sample(subs, s, r), "*"), 
+					ComputeArithmeticResult(ComputeArithmeticResult(1, test, "-"), _falseBranch.sample(subs, s, r), "*"), "+");
 		}
 
 		public EXPR getDist(HashMap<LVAR,LCONST> subs, State s) throws EvalException {
@@ -5606,14 +5606,14 @@ public class RDDL {
 				if (result == null)
 					result = interm_result;
 				else 
-					result = (_sQuantType == FORALL) ? result && interm_result 
+					result = (_sQuantType.equals(FORALL)) ? result && interm_result 
 							  						 : result || interm_result;
 				//System.out.println("After: " + result + " " + (_sQuantType == FORALL));
 								
 				// Early cutoff detection
-				if (_sQuantType == FORALL && result == false)
+				if (_sQuantType.equals(FORALL) && result == false)
 					return BOOL_EXPR.FALSE;
-				else if (_sQuantType == EXISTS && result == true) // exists
+				else if (_sQuantType.equals(EXISTS) && result == true) // exists
 					return BOOL_EXPR.TRUE;
 			}
 		
@@ -5741,6 +5741,7 @@ public class RDDL {
 			for (int i = 0; i < _alVariables.size(); i++) {
 				subs.remove(_alVariables.get(i)._sVarName);
 			}
+			subs = null;
 			return (_sQuantType.equals(FORALL)) ? result 
 					 : ComputeArithmeticResult(1, result, "-");
 		}
@@ -5770,8 +5771,8 @@ public class RDDL {
 						eval = s.toTExp(_expr.sample(subs, s, null), null);
 					} catch (Exception e) { /* ignore here */ }
 
-					if ((_sQuantType == FORALL && eval.IsNumber() && eval.term.coefficient == 0) 
-							|| (_sQuantType == EXISTS && eval.IsNumber() && eval.term.coefficient == 1.0)) {				
+					if ((_sQuantType.equals(FORALL) && eval.IsNumber() && eval.term.coefficient == 0) 
+							|| (_sQuantType.equals(EXISTS) && eval.IsNumber() && eval.term.coefficient == 1.0)) {				
 						// Clear all substitutions before early return
 						for (int i = 0; i < _alVariables.size(); i++) {
 							subs.remove(_alVariables.get(i)._sVarName);
@@ -5813,6 +5814,7 @@ public class RDDL {
 			for (int i = 0; i < _alVariables.size(); i++) {
 				subs.remove(_alVariables.get(i)._sVarName);
 			}
+			subs = null;
 			return (_sQuantType.equals(FORALL)) ? result 
 					 : ComputeArithmeticResult(1, result, "-");
 		}
@@ -5842,7 +5844,7 @@ public class RDDL {
 					boolean eval = (Boolean)_expr.sample(subs, s, null);
 					// If can determine truth value of connective from nonfluents
 					// then any other fluents are irrelevant
-					if ((_sQuantType == FORALL && !eval) || (_sQuantType == EXISTS && eval)) {
+					if ((_sQuantType.equals(FORALL) && !eval) || (_sQuantType.equals(EXISTS) && eval)) {
 												
 						// Clear all substitutions before early return
 						for (int i = 0; i < _alVariables.size(); i++) {
@@ -5892,7 +5894,7 @@ public class RDDL {
 						double eval = getDouble(_expr.sample(subs, s, null));
 						// If can determine truth value of connective from nonfluents
 						// then any other fluents are irrelevant
-						if ((_sQuantType == FORALL && eval == 0.0) || (_sQuantType == EXISTS && eval == 1.0)) {
+						if ((_sQuantType.equals(FORALL) && eval == 0.0) || (_sQuantType.equals(EXISTS) && eval == 1.0)) {
 													
 							// Clear all substitutions before early return
 							for (int i = 0; i < _alVariables.size(); i++) {
@@ -5942,8 +5944,8 @@ public class RDDL {
 						Expression eval = s.toExpression(_expr.sample(subs, s, null));
 						// If can determine truth value of connective from nonfluents
 						// then any other fluents are irrelevant
-						if ((_sQuantType == FORALL && eval._exp.size() == 0 && eval._const == 0.0) || 
-								(_sQuantType == EXISTS && eval._exp.size() == 0 && eval._const == 1.0)) {
+						if ((_sQuantType.equals(FORALL) && eval._exp.size() == 0 && eval._const == 0.0) || 
+								(_sQuantType.equals(EXISTS) && eval._exp.size() == 0 && eval._const == 1.0)) {
 													
 							// Clear all substitutions before early return
 							for (int i = 0; i < _alVariables.size(); i++) {
@@ -5993,8 +5995,8 @@ public class RDDL {
 						TreeExp eval = s.toTExp(_expr.sample(subs, s, null), null);
 						// If can determine truth value of connective from nonfluents
 						// then any other fluents are irrelevant
-						if ((_sQuantType == FORALL && eval.term != null && eval.term.var == -1 && eval.term.coefficient == 0.0) 
-								|| (_sQuantType == EXISTS && eval.term != null && eval.term.var == -1 && eval.term.coefficient == 1.0)) {
+						if ((_sQuantType.equals(FORALL) && eval.term != null && eval.term.var == -1 && eval.term.coefficient == 0.0) 
+								|| (_sQuantType.equals(EXISTS) && eval.term != null && eval.term.var == -1 && eval.term.coefficient == 1.0)) {
 													
 							// Clear all substitutions before early return
 							for (int i = 0; i < _alVariables.size(); i++) {
@@ -6043,11 +6045,11 @@ public class RDDL {
 				!conn.equals(AND) && !conn.equals(OR))
 				throw new Exception("Unrecognized logical connective: " + conn);
 			_sConn = conn.intern();
-			if (b1 instanceof CONN_EXPR && ((CONN_EXPR)b1)._sConn == _sConn)
+			if (b1 instanceof CONN_EXPR && ((CONN_EXPR)b1)._sConn.equals(_sConn))
 				_alSubNodes.addAll(((CONN_EXPR)b1)._alSubNodes);
 			else
 				_alSubNodes.add(b1);
-			if (b2 instanceof CONN_EXPR && ((CONN_EXPR)b2)._sConn == _sConn)
+			if (b2 instanceof CONN_EXPR && ((CONN_EXPR)b2)._sConn.equals(_sConn))
 				_alSubNodes.addAll(((CONN_EXPR)b2)._alSubNodes);
 			else
 				_alSubNodes.add(b2);
@@ -6080,7 +6082,7 @@ public class RDDL {
 		public Object sample(HashMap<LVAR,LCONST> subs, State s, RandomDataGenerator r) throws EvalException {
 			
 			// First check for early termination even if some args are null -- collectGfluents requires this
-			if (_sConn == IMPLY) {
+			if (_sConn.equals(IMPLY)) {
 				Boolean b1 = null;
 				try { // FIXME: should not rely on Exception for control-flow, sample should be modified to return null
 					b1 = (Boolean)_alSubNodes.get(0).sample(subs, s, r);
@@ -6094,7 +6096,7 @@ public class RDDL {
 				if ((b1 != null && b1 == false) || (b2 != null && b2 == true))
 					return BOOL_EXPR.TRUE; // F => ? and ? => T is always true
 					
-			} else if (_sConn != EQUIV) { // must be AND/OR
+			} else if (! _sConn.equals(EQUIV)) { // must be AND/OR
 				for (BOOL_EXPR b : _alSubNodes) {
 					Boolean interm_result = null;
 					try { // FIXME: should not rely on Exception for control-flow, sample should be modified to return null
@@ -6102,21 +6104,21 @@ public class RDDL {
 					} catch (Exception e) { /* ignore this */ }
 
 					// Early cutoff detection
-					if (interm_result != null && _sConn == AND && interm_result == false) // forall
+					if (interm_result != null && _sConn.equals(AND) && interm_result == false) // forall
 						return BOOL_EXPR.FALSE;
-					else if (interm_result != null && _sConn == OR && interm_result == true) // exists
+					else if (interm_result != null && _sConn.equals(OR) && interm_result == true) // exists
 						return BOOL_EXPR.TRUE;
 				}
 			}
 			
 			// Now evaluate as normal
-			if (_sConn == IMPLY) {
+			if (_sConn.equals(IMPLY)) {
 				Boolean b1 = (Boolean)_alSubNodes.get(0).sample(subs, s, r);
 				if (!b1)
 					return TRUE;
 				else
 					return (Boolean)_alSubNodes.get(1).sample(subs, s, r);
-			} else if (_sConn == EQUIV) {
+			} else if (_sConn.equals(EQUIV)) {
 				return ((Boolean)_alSubNodes.get(0).sample(subs, s, r)).equals(
 						(Boolean)_alSubNodes.get(1).sample(subs, s, r));
 			}
@@ -6128,13 +6130,13 @@ public class RDDL {
 				if (result == null)
 					result = interm_result;
 				else 
-					result = (_sConn == AND) ? result && interm_result 
+					result = (_sConn.equals(AND)) ? result && interm_result 
 							  				 : result || interm_result;
 		
 				// Early cutoff detection
-				if (_sConn == AND && result == false)
+				if (_sConn.equals(AND) && result == false)
 					return BOOL_EXPR.FALSE;
-				else if (_sConn == OR && result == true) // exists
+				else if (_sConn.equals(OR) && result == true) // exists
 					return BOOL_EXPR.TRUE;
 			}
 			return result;
@@ -6235,8 +6237,12 @@ public class RDDL {
 
 			// Now handle AND/OR
 			TreeExp result = TreeExp.BuildNewTreeExp(getDouble(1), null);
-			for (BOOL_EXPR b : _alSubNodes) {
-				Object interm_result = b.sample(subs, s, r);
+			BOOL_EXPR b = null;
+			Object interm_result = null;
+			for (int i = 0; i < _alSubNodes.size(); i ++) {
+				b = _alSubNodes.get(i);
+				interm_result = b.sample(subs, s, r);
+
 				//System.out.println(interm_result);
 				if(_sConn.equals(AND)){
 					result = TEState.toTExp(ComputeArithmeticResult(result, interm_result, "*"), null);
@@ -6267,7 +6273,7 @@ public class RDDL {
 			
 			// First go through and check for early termination in the case of AND / OR
 			HashSet<Pair> local_fluents = new HashSet<Pair>();
-			if (_sConn == AND || _sConn == OR) {
+			if (_sConn.equals(AND) || _sConn.equals(OR)) {
 				boolean all_subnodes_state_indep = true;
 				for (BOOL_EXPR b : _alSubNodes) {
 					// The following is more general than check for non-fluents, but may not always deterministically evaluate
@@ -6284,7 +6290,7 @@ public class RDDL {
 						// If AND/false or OR/true then the other elements of this connective are irrelevant and can return with no relevant fluents
 						//System.out.println("Testing if can ignoring branch: " + this + " / " + subs);
 						Boolean eval = (Boolean)b.sample(subs, s, null);
-						if ((_sConn == AND && Boolean.FALSE.equals(eval)) || (_sConn == OR && Boolean.TRUE.equals(eval))) {
+						if ((_sConn.equals(AND) && Boolean.FALSE.equals(eval)) || (_sConn.equals(OR) && Boolean.TRUE.equals(eval))) {
 							//System.out.println("Ignoring branch: " + this);
 							return;
 						}
@@ -6295,7 +6301,7 @@ public class RDDL {
 						boolean eval = (Boolean)b.sample(subs, s, null);
 						// If can determine truth value of connective from nonfluents
 						// then any other fluents are irrelevant
-						if ((_sConn == AND && !eval) || (_sConn == OR && eval)) {
+						if ((_sConn.equals(AND) && !eval) || (_sConn.equals(OR) && eval)) {
 							//System.out.println("\n>> early termination on '" + subs + "'" + this);
 							return; // Terminate fluent collection
 						}
@@ -6305,7 +6311,7 @@ public class RDDL {
 				}
 				if (all_subnodes_state_indep)
 					return; // This expressions value is not state dependent
-			} else if (_sConn == IMPLY || _sConn == EQUIV) {
+			} else if (_sConn.equals(IMPLY) || _sConn.equals(EQUIV)) {
 				Boolean lhs_condition = null;
 				local_fluents.clear();
 				_alSubNodes.get(0).collectGFluents(subs, s, local_fluents);
@@ -6322,7 +6328,7 @@ public class RDDL {
 
 				if (lhs_condition != null && rhs_condition != null)
 					return; // Can terminate since this statement's outcome is independent of state
-				else if (_sConn == IMPLY && (Boolean.FALSE.equals(lhs_condition) || (Boolean.TRUE.equals(rhs_condition)))) 
+				else if (_sConn.equals(IMPLY) && (Boolean.FALSE.equals(lhs_condition) || (Boolean.TRUE.equals(rhs_condition)))) 
 					return; // Can terminate => if LHS false or RHS true since this statement's outcome is independent of state
 			} 
 			
@@ -6552,12 +6558,16 @@ public class RDDL {
 		}
 		public Object sample(HashMap<LVAR,LCONST> subs, TEState s, RandomDataGenerator r) throws EvalException {
 			
-			
 			Object o1 = _e1.sample(subs, s, r);
 			Object o2 = _e2.sample(subs, s, r);
 			
 			
+			
+			
+			
 			if(o1 instanceof TreeExp || o2 instanceof TreeExp) {
+				
+				
 				TreeExp t1 = null;
 				TreeExp t2 = null;
 				if(o2 instanceof Integer) {
@@ -6594,6 +6604,11 @@ public class RDDL {
 					}
 				}
 				
+				//sum_{} <= CONST
+				if(t1.expType.equals("SUM") && _comp.equals(LESSEQ) && t2.expType.equals("LEA") && t2.term.var == -1) {
+					return t1.MINUS(t2).SIG();
+				}
+				
 				// 1 == 1
 				
 				
@@ -6615,74 +6630,10 @@ public class RDDL {
 						return TreeExp.BuildNewTreeExp(1.0, null).MINUS(t1);
 					}
 
-					// a+b+c == 0
-					if (t1.expType.equals("SUM") && ((Integer) theNum2) == 0) {
-						TreeExp _e1ResOri = t1;
-						if (!_e1ResOri.expType.equals("SUM")) {
-							throw new EvalException("_e1 has to be sum node");
-						}
-						TreeExp _e1ResMod = new TreeExp(1.0, null);
-						for (int i = 0; i < _e1ResOri.subExp.size(); i++) {
-							TreeExp sub = _e1ResOri.subExp.get(i);
-							sub.father.remove(sub.father.indexOf(_e1ResOri));
-							_e1ResOri.subExp.remove(i);
-							_e1ResMod = _e1ResMod.TIMES(TreeExp.BuildNewTreeExp(1.0, null).MINUS(sub));
-						}
-						return _e1ResMod;
-					}
-
-					// a+b+c == k
 					
-					if (t1.expType.equals("SUM") && ((Integer) theNum2) > 0) {
-						
-						int k = (Integer) theNum2;
-						if (k == 4) {
-							int a = 1;
-						}
-						
-						//only use group mode in here
-						Policy.groupMode = true;
-						if(s.toString().contains("was-defended_1_a1 := (- (1.0 (* ((- (1.0 v10)) (- (1.0 v11)))))") && _e1.toString().equals("(((was-defended_1_a1 ^ POACHER-REMEMBERS_1(?p)) + (was-defended_2_a1 ^ POACHER-REMEMBERS_2(?p))) + (was-defended_3_a1 ^ POACHER-REMEMBERS_3(?p)))")){
-							int a = 1;
-						}
-						TreeExp _e1ResOri = (TreeExp) _e1.sample(subs, s, r);
-						Policy.groupMode = false;
-						if (!_e1ResOri.expType.equals("SUM")) {
-							throw new EvalException("_e1 has to be sum node");
-						}
-						int subSize = _e1ResOri.subExp.size();
-						
-						if (subSize < k) {
-							throw new EvalException("In a+b+c == k, left must have children more than k");
-						}
-						
-						//generate the combination of k elements from subSize
-						int[] data = new int[k];
-						int[] arr = new int[subSize];
-						
-						for(int i = 0; i < subSize; i ++) {
-							arr[i] = i;
-						}
-						ArrayList<ArrayList<Integer>> theComb = new ArrayList<>();
-						combinationUtil(theComb, arr, data, 0, subSize-1, 0, k);
-
-						//
-						TreeExp _e1ResMod = new TreeExp(0.0, null);
-						for(ArrayList<Integer> oneComb: theComb) {
-							TreeExp oneCombProduct = TreeExp.BuildNewTreeExp(1.0, null);
-							for(int j =0; j < subSize; j ++) {
-								if(oneComb.contains(j)) {
-									oneCombProduct = oneCombProduct.TIMES(_e1ResOri.subExp.get(j));
-								}
-								else {
-									oneCombProduct = oneCombProduct.TIMES(TreeExp.BuildNewTreeExp(1.0, null).MINUS(_e1ResOri.subExp.get(j)));
-								}
-							}
-							_e1ResMod = _e1ResMod.ADD(oneCombProduct);
-						}
-
-						return _e1ResMod;
-					}
+					
+					return t1.MINUS(t2).ADD(TreeExp.BuildNewTreeExp(0.5, null)).SIG()
+							.MINUS(t1.MINUS(t2).MINUS(TreeExp.BuildNewTreeExp(0.5, null)).SIG());
 					
 					
 				}
@@ -6720,7 +6671,7 @@ public class RDDL {
 					equal = (Boolean)ComputeCompResult(v1._oVal, v2._oVal, EQUAL);
 				}
 				//System.out.println("EQUAL: " + equal + " for "+ s1 + " and " + s2);
-				return (comp == EQUAL) ? equal : !equal;
+				return (comp.equals(EQUAL)) ? equal : !equal;
 			}
 
 			// Base cases...
@@ -6740,9 +6691,7 @@ public class RDDL {
 			if (o2 instanceof Boolean)
 				o2 = ((Boolean)o2 == true ? 1 : 0);
 			
-			if(o1 instanceof TreeExp) {
-				int a = 1;
-			}
+
 			
 			// Not so efficient, but should be correct
 			double v1 = ((Number)o1).doubleValue();

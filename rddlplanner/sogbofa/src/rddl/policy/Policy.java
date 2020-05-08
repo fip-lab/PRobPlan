@@ -25,7 +25,7 @@ public abstract class Policy {
 	public RDDL _rddl;
 	public long _timeAllowed = 0;
 	public int currentRound = 0;
-	VisCounter _visCounter;
+	public VisCounter _visCounter;
 	public int horizon = 0;
 	
 	//conformant related
@@ -52,12 +52,21 @@ public abstract class Policy {
 	static public double timeUsedForCal = 0;
 	static public boolean ifFirstStep = false;
 	static public double updatesIntotal = 0;
+	static public double nodesIntotal = 0;
+	static public String algoName = null;
+	static public String instanceName = null;
+	static public double timeAllowed = 0;
 	
+	static public LinkedList<Double> timeHis = new LinkedList<>();
+	static public LinkedList<Double> nodesupdateHis = new LinkedList<>();
+	static public long gradientCost = 0;
+	static public long fndalhpaCost = 0;
 	//constraints for projection
 	// built in buildF, used in projection
 	static public ArrayList<ArrayList<Integer>> sumVars = new ArrayList<>();
 	static public ArrayList<ArrayList<Integer>> sumCoeffecients = new ArrayList<>();
 	static public ArrayList<Integer> sumLimits = new ArrayList<>();
+	static public ArrayList<EXPR> sumLimitsExpr = new ArrayList<>();
 	static public Boolean[] ifInSumConstraints = null;
 	static public ArrayList<Boolean> ifEqual = new ArrayList<>();
 	static public boolean ifConstructConstraints = true;
@@ -93,6 +102,8 @@ public abstract class Policy {
 	//guarentee the sum is flattened
 	//used for a+b=C==k only
 	static public boolean groupMode = false;
+	
+	static public boolean ifPrintSizePredict = false;
 	
 	static public HashMap<PVAR_NAME, HashMap<ArrayList<LCONST>, Integer>> act2Int = new HashMap<>();
 	

@@ -346,6 +346,7 @@ public class State implements Cloneable, Serializable{
 		try {
 			_r2g = new RDDL2Graph(this);
 			deriveDAGOrdering();
+			System.out.println("Finished RDD2Graph!");
 			// System.out.println("Derived: " + _alDerivedGfluentOrdering);
 			// System.out.println("Interm: " + _alIntermGfluentOrdering);
 		} catch (Exception e) {

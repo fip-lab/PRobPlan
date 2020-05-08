@@ -1,21 +1,33 @@
 package rddl;
 
+import java.beans.FeatureDescriptor;
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.swing.event.InternalFrameListener;
+
+import rddl.RDDL.IF_EXPR;
+import rddl.competition.Records;
 import rddl.policy.Policy;
+import rddl.Global;
 
 
 
 public class TreeExp {
 	
 
-	class Term { // 项
+	public class Term {
 		/*
 		 * if the node type is "THRE", then coefficient = max var = min note min
 		 * can only be integer
 		 */
-		double coefficient; //discount factor
-		int var;
+		public double coefficient;
+		public int var;
 
 		public Term(double c) {
 			coefficient = c;
@@ -35,7 +47,7 @@ public class TreeExp {
 		}
 	}
 
-	// node type has "SUM"/"MIN"/"PRO"/"DIV"/"LEA"/EX
+	// node type has "SUM"/"MIN"/"PRO"/"DIV"/"LEA"/"ATANH"
 	public String expType;
 	// if a node is leaf, then there is a term assgined to it
 	public Term term = null;
@@ -44,7 +56,7 @@ public class TreeExp {
 	// pointer to the father
 	public ArrayList<TreeExp> father = null;
 
-	static public int counter = 0;
+	static public long counter = 0;
 	
 	public long numOfNonLeaf = 0;
 
@@ -52,7 +64,10 @@ public class TreeExp {
 
 	int printCounter = 0;
 
-	static final double ACTIVE_THRE = 500;
+	//parameters for SIGMOID nodes
+	static final double ACTIVE_THRE = 10;
+	static final double SMALL_GRAD = 0.001;
+	static final double SIG_MULTIPLIER = 10000;
 
 	public TreeExp() {
 		counter ++;
@@ -65,18 +80,28 @@ public class TreeExp {
 		nodesToNumber = new HashMap<>();
 	}
 
-	// 如果是缓存的，直接从缓存中拿
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    BigDecimal bd = new BigDecimal(value);
+	    bd = bd.setScale(places, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
+	}
 	public static TreeExp BuildNewTreeExp(double constant, TreeExp f) {
+		
+
 		if (Global.ifLift && nodesToNumber.containsKey(constant)) {
 			// long startGetSameTree = System.currentTimeMillis();
 			TreeExp theNode = nodesToNumber.get(constant);
 			// long usage = System.currentTimeMillis() - startGetSameTree;
 			// if(usage > 0)
 			// System.out.println("Reading exist trees: " + usage);
+			//System.out.println("Hit: " + constant);
 			return theNode;
 		} else {
 			TreeExp node = new TreeExp(constant, f);
-			if (Global.ifRecordLift) {
+			if (Global.ifRecordLift //&& (!Global.ifFilterByRounding || round(constant, 1) == constant)
+					) {
 				nodesToNumber.put(constant, node);
 			}
 			return node;
@@ -165,7 +190,7 @@ public class TreeExp {
 		return term.var;
 	}
 
-	// Get real value of a tree
+	// Get realvalue of a tree
 	public double RealValue(ArrayList<Double> varVal,
 			HashMap<TreeExp, Double> valRec) throws EvalException {
 
@@ -189,7 +214,7 @@ public class TreeExp {
 					}
 
 				} else {
-					if (expType.equals("MIN")) { // minus
+					if (expType.equals("MIN")) {
 						r = subExp.get(0).RealValue(varVal, valRec);
 						for (int i = 1; i < subExp.size(); i++) {
 							r -= subExp.get(i).RealValue(varVal, valRec);
@@ -214,6 +239,10 @@ public class TreeExp {
 										valRec);
 								double b = subExp.get(1).RealValue(varVal,
 										valRec);
+								if(b == 0) {
+									@SuppressWarnings("unused")
+									int c = 1;
+								}
 								r = a / b;
 							} else {
 								if (expType.equals("EXP")) {
@@ -225,17 +254,8 @@ public class TreeExp {
 											.RealValue(varVal, valRec);
 									r = Math.exp(rt);
 								} else if (expType.equals("SIGMOID")) {
-									double a = subExp.get(0).RealValue(varVal,
-											valRec);
-									if (a > ACTIVE_THRE) {
-										r = 1;
-									} else {
-										if (a < -ACTIVE_THRE) {
-											r = 0;
-										} else {
-											r = Sigmoid(a);
-										}
-									}
+									double a = subExp.get(0).RealValue(varVal, valRec);
+									r = Sigmoid(a);
 								} else {
 									if (expType.equals("THR")) {
 										double a = subExp.get(0).RealValue(
@@ -283,6 +303,11 @@ public class TreeExp {
 		double a = 1.0 / (1.0 + Math.exp(0.0 - x));
 		return a;
 	}
+	
+	public double tanh(double x) {
+		double a = (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) +                                                                                                                                                                                                                                                                                                                                                                                              Math.exp(-x));
+		return a;
+	}
 
 	// see bellow
 	public void ClearFather() {
@@ -295,6 +320,8 @@ public class TreeExp {
 			}
 		}
 	}
+	
+	
 
 	// get the gradients for variables using gradient tree
 	// used for reverse accumulation
@@ -307,11 +334,6 @@ public class TreeExp {
 		ArrayList<Double> selves = new ArrayList<Double>();
 		ArrayList<Double> fathers = new ArrayList<Double>();
 		for (TreeExp f : father) {
-			
-			
-			
-			
-			
 			if (f == null || !f.ifInQ) {
 				continue;
 			}
@@ -367,16 +389,7 @@ public class TreeExp {
 							} else {
 								if (f.expType.equals("SIGMOID")) {
 									double a = this.RealValue(varVal, valRec);
-									if (a > ACTIVE_THRE) {
-										selfDev = Math.pow(10, -5);
-									} else {
-										if (a < -ACTIVE_THRE) {
-											selfDev = -Math.pow(10, -5);
-										} else {
-											selfDev = Sigmoid(a)
-													* (1 - Sigmoid(a));
-										}
-									}
+									selfDev = Sigmoid(a) * (1 - Sigmoid(a));
 								} else {
 									if (f.expType.equals("THR")) {
 										selfDev = 1;
@@ -414,19 +427,11 @@ public class TreeExp {
 			}
 			thePartDev += selfDev * fatherPartDev;
 			selves.add(selfDev);
-			
 			fathers.add(fatherPartDev);
 		}
 		
-		if (thePartDev == 0) {
-			@SuppressWarnings("unused")
-			TreeExp a = this;
-		}
 		partialDev.put(this, thePartDev);
-		if (thePartDev == 0) {
-			@SuppressWarnings("unused")
-			int a = 1;
-		}
+
 		return thePartDev;
 	}
 
@@ -606,107 +611,7 @@ public class TreeExp {
 
 	}
 
-	// Get gradient expression of this expression
-	// It is a process of building numOfVar trees
-	public double GetGradient(int var, ArrayList<Double> varVal,
-			HashMap<TreeExp, Double> gradRec, HashMap<TreeExp, Double> valRec)
-			throws EvalException {
-		if (gradRec.containsKey(this)) {
-			return gradRec.get(this);
-		}
-		double r = 0;
-		if (expType.equals("LEA")) {
-			r = GetGradientForTerm(var);
-		} else {
-			if (expType.equals("PRO")) {
-				for (int t = 0; t < subExp.size(); t++) {
-					double tmp = 1;
-					for (int tt = 0; tt < subExp.size(); tt++) {
-						tmp *= tt == t ? subExp.get(tt).GetGradient(var,
-								varVal, gradRec, valRec) : subExp.get(tt)
-								.RealValue(varVal, valRec);
-						if (tmp == 0) {
-							break;
-						}
-					}
-					r += tmp;
-				}
-			} else {
-				if (expType.equals("MIN")) {
-					r = subExp.get(0).GetGradient(var, varVal, gradRec, valRec);
-					for (int t = 1; t < subExp.size(); t++) {
-						r -= subExp.get(t).GetGradient(var, varVal, gradRec,
-								valRec);
-					}
-
-				} else {
-					if (expType.equals("SUM")) {
-						for (int t = 0; t < subExp.size(); t++) {
-							r += subExp.get(t).GetGradient(var, varVal,
-									gradRec, valRec);
-						}
-					} else {
-						if (expType.equals("DIV")) {
-							if (subExp.size() != 2) {
-								throw new EvalException(
-										"Divid has to have twoo subexps!");
-							}
-							r = subExp.get(0).GetGradient(var, varVal, gradRec,
-									valRec)
-									* subExp.get(1).RealValue(varVal, valRec)
-									- subExp.get(1).GetGradient(var, varVal,
-											gradRec, valRec)
-									* subExp.get(0).RealValue(varVal, valRec);
-							r /= Math.pow(
-									subExp.get(1).RealValue(varVal, valRec), 2);
-						} else {
-							if (expType.equals("EXP")) {
-								r = this.RealValue(varVal, valRec)
-										* subExp.get(0).GetGradient(var,
-												varVal, gradRec, valRec);
-							} else {
-								if (expType.equals("SIGMOID")) {
-									double a = subExp.get(0).RealValue(varVal,
-											valRec);
-									if (a < -ACTIVE_THRE || a > ACTIVE_THRE) {
-										return Math.pow(10.0, -5.0);
-									} else {
-										return Sigmoid(a)
-												* (1 - Sigmoid(a))
-												* subExp.get(0).GetGradient(
-														var, varVal, gradRec,
-														valRec);
-									}
-								} else {
-									if (expType.equals("POW")) {
-										// the exponent of this
-										double b = subExp.get(1).RealValue(
-												varVal, valRec);
-										// value of x
-										double a = subExp.get(0).RealValue(
-												varVal, valRec);
-										// return the gradient
-										return b
-												* Math.pow(a, b - 1)
-												* subExp.get(0).GetGradient(
-														var, varVal, gradRec,
-														valRec);
-									} else
-										throw new EvalException(
-												"GetGradient: the operation"
-														+ expType
-														+ "is not supported");
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		gradRec.put(this, r);
-		return r;
-	}
+	
 
 	public double ToNumber() {
 		if (expType.equals("LEA") && term.var == -1) {
@@ -1078,6 +983,16 @@ public class TreeExp {
 
 	public TreeExp SIG() {
 		TreeExp newExp = new TreeExp("SIGMOID", null);
+		newExp.subExp.add(this);
+		if (father == null) {
+			father = new ArrayList<TreeExp>();
+		}
+		father.add(newExp);
+		return newExp;
+	}
+	
+	public TreeExp ABS_TANH() {
+		TreeExp newExp = new TreeExp("ATANH", null);
 		newExp.subExp.add(this);
 		if (father == null) {
 			father = new ArrayList<TreeExp>();

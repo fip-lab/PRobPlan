@@ -166,9 +166,7 @@ public class TEState {
 		} else if (o instanceof Integer) {
 			theVal = Double.valueOf(o.toString());
 		} else {
-			if(o == null) {
-				int a = 1;
-			}
+
 			theVal = (Double) o;
 		}
 		return TreeExp.BuildNewTreeExp(getDouble(theVal), father);
@@ -440,7 +438,6 @@ public class TEState {
 		if(!InitAggState(s)){
 			System.out.println("Init fail");
 		}
-		
 	}
 
 	public void SetActNoCompute(ArrayList<PVAR_INST_DEF> actions)
@@ -866,8 +863,11 @@ public class TEState {
 						LCONST c = (LCONST) gfluent.get(i);
 						subs.put(v, c);
 					}
+					
 
 					Object value = cpf._exprEquals.sample(subs, this, r);
+
+
 					//String v = value.toString();
 					if (DISPLAY_UPDATES)
 						System.out.println(value);
@@ -1492,12 +1492,11 @@ public class TEState {
 		}
 		if (ret == null)
 			ret = def_value;
-		if(ret == null) {
-			int a = 1;
-		}
+
 		TreeExp tret = toTExp(ret, null);
 		//if(!Policy._ifDisAction){
-
+		
+		
 		if (Policy._extraEffects.containsKey(p)) {
 			// addVars.addAll(c)
 			ArrayList<TYPE_NAME> typenames = LCONST2TYPE_NAME(terms, vars);
@@ -1510,9 +1509,7 @@ public class TEState {
 				// first decide if the type of each parameter is a subclass of the type of
 				// parameters in the preconditions
 				ArrayList<TYPE_NAME> constraintsTypeName = (ArrayList<RDDL.TYPE_NAME>) pair.getKey();
-				if(typenames.contains(null)) {
-					int a = 1;
-				}
+
 				if (IfSuperClassList(typenames, constraintsTypeName)) {
 					// times each additional effects to the action variables
 					for (BOOL_EXPR theAddEff : (ArrayList<BOOL_EXPR>) pair.getValue()) {
@@ -1528,9 +1525,18 @@ public class TEState {
 							LVAR theVar = (LVAR) Policy._extraEffectsLVARS.get(p).get(constraintsTypeName).get(i);
 							newSubs.put(theVar, (LCONST) subs.get(alVar.get(i)));
 						}
-
+						if(newSubs.size() == 1 && theAddEff instanceof PVAR_EXPR && ((PVAR_EXPR)theAddEff)._alTerms.size() == 1) {
+							Map.Entry<LVAR, LCONST> entry = newSubs.entrySet().iterator().next();
+							LVAR key = entry.getKey();
+							if(!key.toString().equals(((PVAR_EXPR)theAddEff)._alTerms.get(0).toString())) {
+								LCONST value = entry.getValue();
+								newSubs.put((LVAR)((PVAR_EXPR)theAddEff)._alTerms.get(0), value);
+							}
+						}
 						TreeExp theT = TEState.toTExp(theAddEff.sample(newSubs, this, newR), null);
-
+						
+						newSubs.clear();
+						newSubs = null;
 						
 						tret = tret.TIMES(theT);
 
@@ -1544,6 +1550,8 @@ public class TEState {
 				}
 			}
 		}
+		vars.clear();
+		vars = null;
 		//System.out.println(p);
 		return tret;
 		
@@ -1697,7 +1705,7 @@ public class TEState {
 	}
 	
 	public void AddExtraActionEff(HashMap<PVAR_NAME, HashMap<ArrayList<LCONST>, TreeExp>> m, 
-			ArrayList<ArrayList<Integer>> sumVars , ArrayList<Integer> sumLimit, ArrayList<ArrayList<Integer>> sumcoe) throws Exception{
+			ArrayList<ArrayList<Integer>> sumVars , ArrayList<Integer> sumLimit, ArrayList<EXPR> sumLimitExpr, ArrayList<ArrayList<Integer>> sumcoe) throws Exception{
 		
 		//deals with different constrints
 		for(BOOL_EXPR c: _alActionPreconditions){
@@ -1798,11 +1806,9 @@ public class TEState {
 									Policy._forcedCondExistLVARS.get(leftP).put(leftTypes, new ArrayList<>());
 								}
 								Policy._forcedCondExistLVARS.get(leftP).put(leftTypes, leftExp._alTerms);
-								continue;
-								
+								continue;		
 							}
 						}
-						
 					}
 				}
 				
@@ -1885,7 +1891,7 @@ public class TEState {
 
 			
 			//move_1 + move_2 + ... <= xxx
-			//(sum_{arguments} [move_1() + move_2 + ...]> <= xxx
+			//(sum_{arguments} [move_1() + move_2 + ...] <= xxx)
 			if(c instanceof COMP_EXPR) {
 				ArrayList<ArrayList<Integer>> res = FindSubs(1, new HashMap<LVAR, RDDL.LTERM>(), 
 						((COMP_EXPR) c)._e1, m);
@@ -1899,14 +1905,21 @@ public class TEState {
 				EXPR e2exp = ((COMP_EXPR)c)._e2;
 				if(e2exp instanceof RDDL.INT_CONST_EXPR) {
 					sumLimit.add(((RDDL.INT_CONST_EXPR)e2exp)._nValue);
+					sumLimitExpr.add(null);
 				}
 				else {
 					if(e2exp instanceof PVAR_EXPR) {
 						PVAR_EXPR e2ExpPVAR = (PVAR_EXPR)((COMP_EXPR)c)._e2;
 						sumLimit.add((Integer)getPVariableDefault(e2ExpPVAR._pName));
+						sumLimitExpr.add(null);
 					}
 					else {
-						throw new EvalException("Compare expr only supports <= INT");
+						if(e2exp instanceof AGG_EXPR) {
+							sumLimitExpr.add(e2exp);
+						}
+						else {
+							throw new EvalException("Compare expr only supports <= INT/sum_{}");
+						}
 					}
 				}
 				if(((COMP_EXPR) c)._comp.equals("==")) {
@@ -1921,8 +1934,7 @@ public class TEState {
 			
 			if(c instanceof QUANT_EXPR && ((QUANT_EXPR)c)._sQuantType.equals("forall")){
 				BOOL_EXPR theE = ((QUANT_EXPR) c)._expr;
-				if(theE instanceof CONN_EXPR){
-					
+				if(theE instanceof CONN_EXPR){	
 					if(((CONN_EXPR) theE)._sConn.equals("=>")) {
 						CONN_EXPR conn = (CONN_EXPR)theE;
 						// forall_{move() => XXXXXXX}
@@ -2053,16 +2065,21 @@ public class TEState {
 								sumcoe.add(res.get(1));
 								for(int j = 0; j < projectActions.size(); j ++) {
 									int theAct = projectActions.get(j);
+									if(theAct == 2) {
+										int a = 1;
+									}
 									Policy.ifInSumConstraints[theAct] = true;
 								}
 								EXPR e2exp = ((COMP_EXPR)(((QUANT_EXPR) c)._expr))._e2;
 								if(e2exp instanceof RDDL.INT_CONST_EXPR) {
 									sumLimit.add(((RDDL.INT_CONST_EXPR)e2exp)._nValue);
+									sumLimitExpr.add(null);
 								}
 								else {
 									if(e2exp instanceof PVAR_EXPR) {
 										PVAR_EXPR e2ExpPVAR = (PVAR_EXPR)((COMP_EXPR)(((QUANT_EXPR) c)._expr))._e2;
 										sumLimit.add((Integer)getPVariableDefault(e2ExpPVAR._pName));
+										sumLimitExpr.add(null);
 									}
 									else {
 										throw new EvalException("Compare expr only supports <= INT");
@@ -2084,6 +2101,47 @@ public class TEState {
 						e.printStackTrace();
 					}
 					continue;
+				}
+				
+				if(theE instanceof QUANT_EXPR && ((QUANT_EXPR)theE)._sQuantType.equals("forall")){
+					UpdateRecord((QUANT_EXPR)theE);
+					BOOL_EXPR theE2 = ((QUANT_EXPR) theE)._expr;
+					if(theE2 instanceof CONN_EXPR){
+						
+						if(((CONN_EXPR) theE2)._sConn.equals("=>")) {
+							CONN_EXPR conn = (CONN_EXPR)theE2;
+							// forall_{move() => XXXXXXX}
+							if(conn._alSubNodes.get(0) instanceof PVAR_EXPR){
+								PVAR_EXPR theExp = (PVAR_EXPR)(conn._alSubNodes.get(0));
+								PVAR_NAME theP = theExp._pName;
+								ArrayList<TYPE_NAME> theTypes = new ArrayList<>();
+								for(LTERM l: theExp._alTerms) {
+									theTypes.add(Policy.TYPERecord.get(l));
+								}
+								if(_alActionNames.contains(theP)){
+									if(!Policy._extraEffects.containsKey(theP)){
+										Policy._extraEffects.put(theP, new HashMap<>());
+									}
+									if(!Policy._extraEffects.get(theP).containsKey(theTypes)) {
+										Policy._extraEffects.get(theP).put(theTypes, new ArrayList<>());
+									}
+									Policy._extraEffects.get(theP).get(theTypes).add(conn._alSubNodes.get(1));	
+									//record the lvars used in the action preconditions
+									//this is to verify that the action variable being evaluated has the same lvars
+									//as in the constraints
+									//would be called when adding the effects to the action variables
+									if(!Policy._extraEffectsLVARS.containsKey(theP)){
+										Policy._extraEffectsLVARS.put(theP, new HashMap<>());
+									}
+									if(!Policy._extraEffectsLVARS.get(theP).containsKey(theTypes)) {
+										Policy._extraEffectsLVARS.get(theP).put(theTypes, new ArrayList<>());
+									}
+									Policy._extraEffectsLVARS.get(theP).put(theTypes, theExp._alTerms);	
+									continue;
+								}
+							}
+						}
+					}
 				}
 			}
 			

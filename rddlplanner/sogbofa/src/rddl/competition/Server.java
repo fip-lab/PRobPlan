@@ -1,5 +1,5 @@
 /**
- * RDDL: Main server code for interaction with RDDLSim client
+lient * RDDL: Main server code for interaction with RDDLSim client
  * 
  * @author Sungwook Yoon (sungwook.yoon@gmail.com)
  * @version 10/1/10
@@ -129,7 +129,7 @@ public class Server implements Runnable {
 	private static String LOG_FILE = "rddl";
 	private static boolean MONITOR_EXECUTION = false;
 	private static String SERVER_FILES_DIR = "";
-	private static String CLIENT_FILES_DIR = "";
+	//private static String CLIENT_FILES_DIR = "";
     
 	public int port;
 	public int id;
@@ -170,17 +170,11 @@ public class Server implements Runnable {
 		try {
 			// Load RDDL files
 			SERVER_FILES_DIR = new String(args[0]);
-			CLIENT_FILES_DIR = new String(args[0]);
+			//CLIENT_FILES_DIR = new String(args[0]);
 
 			File[] subDirs = new File(args[0]).listFiles(File::isDirectory);
 			// Check if there are subdirectories called "client" and "server"
-			for (File subDir : subDirs) {
-				if (subDir.getName().equals("server")) {
-				SERVER_FILES_DIR =  new String(subDir.getPath());
-				} else if (subDir.getName().equals("client")) {
-					CLIENT_FILES_DIR =  new String(subDir.getPath());
-				}
-			}
+
 
 			RDDL rddl = new RDDL(SERVER_FILES_DIR);
 
@@ -198,28 +192,24 @@ public class Server implements Runnable {
 				rand_seed = DEFAULT_SEED;
 			}
             if (args.length > 4) {
-                if (args[4].equals("1"))
-                    INDIVIDUAL_SESSION = true;
-            }
-            if (args.length > 5) {
-                if (args[5].equals("0")) {
+                if (args[4].equals("0")) {
                     USE_TIMEOUT = false;
 		} else {
 			USE_TIMEOUT = true;
-			DEFAULT_TIME_ALLOWED = Integer.valueOf(args[5]) * 1000;
+			DEFAULT_TIME_ALLOWED = Integer.valueOf(args[4]) * 1000;
 		}
             }
-            if (args.length > 6) {
-                LOG_FILE = args[6] + "/logs";
+            if (args.length > 5) {
+                LOG_FILE = args[5] + "/logs";
             }
-            if (args.length > 7) {
-                assert(args[7].equals("0") || args[7].equals("1"));
-                if (args[7].equals("1")) {
+            if (args.length > 6) {
+                assert(args[6].equals("0") || args[6].equals("1"));
+                if (args[6].equals("1")) {
                     MONITOR_EXECUTION = true;
                 }
             }
-			if (args.length > 8) {
-				state_viz = (StateViz)Class.forName(args[8]).newInstance();
+			if (args.length > 7) {
+				state_viz = (StateViz)Class.forName(args[7]).newInstance();
 			}
 			System.out.println("RDDL Server Initialized");
 			while (true) {
@@ -457,7 +447,7 @@ public class Server implements Runnable {
 			String domainName = domain._sDomainName;
 			
 				String instanceRecord = requestedInstance.substring(requestedInstance.lastIndexOf("_")+1);
-				if(!record.fileAppend(domainName + "_instanceAll" + "_" + clientName + "_" + timeAllowed, instanceRecord + " " + aveReward + " " + sd)){
+				if(!record.fileAppend(clientName + "_" + (timeAllowed / 1000) + "_" + requestedInstance + "_" + "Score", instanceRecord + " " + aveReward + " " + sd)){
 					System.out.println("Recording data failed!"); 
 				}
 			
@@ -759,8 +749,8 @@ public class Server implements Runnable {
 			INSTANCE instance = server.rddl._tmInstanceNodes.get(server.requestedInstance);
 			DOMAIN domain = server.rddl._tmDomainNodes.get(instance._sDomain);
 
-			String domainFile = CLIENT_FILES_DIR + "/" + domain._sFileName + "." + server.inputLanguage;
-			String instanceFile = CLIENT_FILES_DIR + "/" + instance._sFileName + "." + server.inputLanguage;
+			String domainFile = SERVER_FILES_DIR + "/" + domain._sFileName + "." + server.inputLanguage;
+			String instanceFile = SERVER_FILES_DIR + "/" + instance._sFileName + "." + server.inputLanguage;
 
 			// NONFLUENTS nonFluents = null;
 			// if (instance._sNonFluents != null) {
